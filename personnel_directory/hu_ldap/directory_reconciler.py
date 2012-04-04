@@ -13,7 +13,7 @@ if __name__=='__main__':
 
 from personnel_directory.common.msg_util import *
 from personnel_directory.person.models import Person
-from mcb.hu_ldap.models import HarvardPersonInfo
+from personnel_directory.hu_ldap.models import HarvardPersonInfo
 from hu_person_search import HUDirectorySearcher
 from mcb.hu_ldap.harvard_info_updater import HarvardPersonInfoUpdater
 

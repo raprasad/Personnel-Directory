@@ -31,7 +31,7 @@ import sys
 
 from mcb.hu_ldap.hu_person_search import HUDirectorySearcher
 from mcb.hu_ldap.harvard_info_updater import HarvardPersonInfoUpdater
-from mcb.hu_ldap.models import HarvardPersonInfo
+from personnel_directory.hu_ldap.models import HarvardPersonInfo
 from personnel_directory.person.models import Person
 
 def msg(s):

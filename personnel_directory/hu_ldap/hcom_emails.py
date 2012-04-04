@@ -23,7 +23,7 @@ import ldap, sys, md5
 from helper_classes import MemberInfo
 from hu_person_search import HUDirectorySearcher
 from personnel_directory.person.models import Person
-from mcb.hu_ldap.models import HarvardPersonInfo
+from personnel_directory.hu_ldap.models import HarvardPersonInfo
 from huid_name import huid_map
 
 def map_hcom_to_email():

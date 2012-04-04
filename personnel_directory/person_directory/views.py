@@ -27,7 +27,7 @@ def view_directory_search_form(request, render_as_json=True):
     lu = {}
     callback = request.GET.get('jsoncallback', None)
     
-    if request.method == 'GET' and request.GET.has_key('id_mcb_personnel_dir'):  
+    if request.method == 'GET' and request.GET.has_key('id_mcb_pdir'):  
         results_dict = retrieve_directory_search_results(request)
         #msgt('results_dict: %s' % results_dict)
         if results_dict.has_key('ERR_nothing_selected'):

@@ -30,7 +30,7 @@ from personnel_directory.common.msg_util import msg, msgt
 import sys
 
 from personnel_directory.person.models import Person
-from mcb.hu_ldap.models import HarvardPersonInfo
+from personnel_directory.hu_ldap.models import HarvardPersonInfo
 
 DISCREPANCY_TYPE_EMAIL = 'EMAIL'
 DISCREPANCY_TYPE_PHONE = 'PHONE'

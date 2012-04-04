@@ -7,7 +7,7 @@
 {% endif %}
 
 <form action="{% url view_directory_search_form %}"  id="id_mcb_directory_form" method='get'>
-<input type="hidden" id="id_mcb_personnel_dir" name="id_mcb_personnel_dir" value="-1" />
+<input type="hidden" id="id_mcb_pdir" name="id_mcb_pdir" value="1" />
 {% for field in text_form %}
     <b>{{ field.label_tag }}</b>:  {{ field }} <input type="submit" name="submit" value="Go" />  
     <br />{% if field.help_text %}<br />{{ field.help_text }}{% endif %}

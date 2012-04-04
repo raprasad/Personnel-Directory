@@ -190,7 +190,7 @@ class HarvardPersonInfo(models.Model):
         super(HarvardPersonInfo, self).save()
 
 '''
-from mcb.hu_ldap.models import HarvardPersonInfo
+from personnel_directory.hu_ldap.models import HarvardPersonInfo
 l = HarvardPersonInfo.objects.all()
 for p in l: p.save()
 

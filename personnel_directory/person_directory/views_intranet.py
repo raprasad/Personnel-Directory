@@ -35,7 +35,7 @@ def view_intranet_directory_search_form(request, render_as_json=True):
            
 
         
-    if request.method == 'GET' and request.GET.has_key('id_mcb_personnel_dir'):  
+    if request.method == 'GET' and request.GET.has_key('id_mcb_pdir'):  
         results_dict = retrieve_directory_search_results(request, is_departmental_intranet=True)
         
         #msgt('results_dict: %s' % results_dict)

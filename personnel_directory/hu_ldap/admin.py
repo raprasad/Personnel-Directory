@@ -1,4 +1,4 @@
-from mcb.hu_ldap.models import HarvardTitle, HarvardPersonInfo, HarvardAffiliation
+from personnel_directory.hu_ldap.models import HarvardTitle, HarvardPersonInfo, HarvardAffiliation
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 

@@ -11,7 +11,7 @@ function submit_directory_search_form(frm_data_str){
       if (!frm_data_str) {
           frm_data_str = frm_obj.serialize();       // use data from the full form
       }else{
-          frm_data_str += '&id_mcb_personnel_dir=-1'    // used data from a link
+          frm_data_str += '&id_mcb_pdir=1'    // used data from a link
       }
 
       // Submit the form via ajax

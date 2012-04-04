@@ -27,7 +27,7 @@ from personnel_directory.common.mailer import send_message, get_admin_email_addr
 from personnel_directory.common.msg_util import *
 
 from personnel_directory.person.models import Person
-from mcb.hu_ldap.models import HarvardPersonInfo, HarvardTitle, HarvardAffiliation
+from personnel_directory.hu_ldap.models import HarvardPersonInfo, HarvardTitle, HarvardAffiliation
 from hu_person_search import HUDirectorySearcher
 
 class HarvardPersonInfoUpdater:
