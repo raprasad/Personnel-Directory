@@ -1,0 +1,62 @@
+<div class="psrch_results_message">
+{% if lab_names %}
+Lab{{ lab_names|pluralize }}: {% for l in lab_names %}<b>{{ l }}</b>{% if not forloop.last %};     {% endif %}{% endfor %}<br />
+{% endif %}
+
+{% if office_names %}
+Office{{ office_names|pluralize }}: {% for l in office_names %}<b>{{ l }}</b>{% if not forloop.last %};     {% endif %}{% endfor %}<br />
+{% endif %}
+
+{% if appointment_names %}
+Appointment Type{{ appointment_names|pluralize }}: {% for l in appointment_names %}<b>{{ l }}</b>{% if not forloop.last %};     {% endif %}{% endfor %}<br />
+{% endif %}
+
+{% if title_names %}
+Title{{ title_names|pluralize }}: {% for l in title_names %}<b>{{ l }}</b>{% if not forloop.last %};     {% endif %}{% endfor %}<br />
+{% endif %}
+
+{% if graduate_years %}
+Graduate Year{{ graduate_years|pluralize }}: {% for l in graduate_years %}<b>{{ l }}</b>{% if not forloop.last %};     {% endif %}{% endfor %}<br />
+{% endif %}
+
+{% if search_vals %}
+Search Term{{ search_vals|pluralize }}: {% for l in search_vals %}"<b>{{ l }}</b>"{% if not forloop.last %} and     
+{% endif %}{% endfor %}<br />
+{% endif %}
+
+<!-- num records found -->
+{% if person_cnt  %}{{ person_cnt }} record{{ person_cnt|pluralize }} found<br />{% endif %}
+
+<!-- no one found -->
+{% ifequal person_cnt 0  %}
+<div class="errbox_msg">
+Sorry!  No one found was found for {{ search_vals|pluralize:"that search term, those search terms" }}.  
+<br />&gt; return to the main <a class="psrch_search_again">Directory Search</a> page
+</div>
+{% endifequal %}
+
+
+<!-- search again-->
+<a class="psrch_search_again">search again</a><br />
+
+</div>
+{% if people %}
+    {% include "person_directory/results_table.html" %}
+    <!-- search again-->
+    <div class="psrch_results_message">
+    {% include "person_directory/mailing_information.html" %}    
+        
+    <br /><a  class="psrch_search_again">search again</a>
+    </div>
+{% endif %}
+
+{% include "sql_query_debug.html" %}
+{% comment %}
+<!-- query debug -->
+{% for q in queries %}
+ <b>({{ forloop.counter }})</b> {{ q.sql }}<br />
+ {{ q.time }}
+ <hr />
+{% endfor %}
+{% endcomment %}
+</div>

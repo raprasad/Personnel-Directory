@@ -1,0 +1,58 @@
+[
+ {
+  "pk": 1, 
+  "model": "person.graduateyear", 
+  "fields": {
+   "name": "G1"
+  }
+ }, 
+ {
+  "pk": 2, 
+  "model": "person.graduateyear", 
+  "fields": {
+   "name": "G2"
+  }
+ }, 
+ {
+  "pk": 3, 
+  "model": "person.graduateyear", 
+  "fields": {
+   "name": "G3"
+  }
+ }, 
+ {
+  "pk": 4, 
+  "model": "person.graduateyear", 
+  "fields": {
+   "name": "G4"
+  }
+ }, 
+ {
+  "pk": 5, 
+  "model": "person.graduateyear", 
+  "fields": {
+   "name": "G5"
+  }
+ }, 
+ {
+  "pk": 6, 
+  "model": "person.graduateyear", 
+  "fields": {
+   "name": "G6"
+  }
+ }, 
+ {
+  "pk": 7, 
+  "model": "person.graduateyear", 
+  "fields": {
+   "name": "G7"
+  }
+ }, 
+ {
+  "pk": 8, 
+  "model": "person.graduateyear", 
+  "fields": {
+   "name": "G8"
+  }
+ }
+]

@@ -1,0 +1,40 @@
+--NAME--
+last name: {{ p.lname }}
+first name/mi: {{ p.fname }} {{ p.minitial }}
+
+-- CONTACT --
+email: {{ p.email }}
+phone: {{ p.phone }}
+{% if p.second_phone %}second_phone: {{ p.second_phone }}{% endif %}
+{% if p.second_email %}second_email: {{ p.second_email }}{% endif %}
+
+-- ADDRESS --
+room: {{ p.room }}
+building: {{ p.building }}
+
+-- APPOINTMENT/AFFILIATION/TITLE --
+appointment: {{ p.appointment }}
+affiliation: {{ p.affiliation }}
+{% if p.title %}title: {{ p.title }}{% endif %}
+{% if p.secondary_titles %}{% for st in p.secondary_titles.all %}{% if forloop.first %}secondary title(s):{% endif %}
+{{ st }}
+{% endfor %}{% endif %}
+{% if p.long_title %}long_title: {{ p.long_title }}{% endif %}
+
+-- GRAD PROGRAM --
+{% if p.grad_program or p.grad_year %}{% if p.grad_program %}grad program: {{ p.grad_program }}{% endif %}
+{% if p.grad_year %}grad year: {{ p.grad_year }}{% endif %}{% endif %}
+
+-- OFFICE --
+{% if p.office %}office: {{ p.office }}{% endif %}
+{% if p.secondary_offices %}{% for st in p.secondary_offices.all %}{% if forloop.first %}secondary title(s):{% endif %}
+{{ st }}
+{% endfor %}{% endif %}
+
+-- LAB --
+{% if p.primary_lab %}primary lab: {{ p.primary_lab }}{% endif %}
+{% if p.secondary_labs %}{% for st in p.secondary_labs.all %}{% if forloop.first %}secondary lab(s):{% endif %}
+-- {{ st }}{% endfor %}{% endif %}
+
+{% if p.alt_search_term %}alt search term: {{ p.alt_search_term }}{% endif %}
+   

@@ -1,0 +1,310 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<meta http-equiv="Content-Language" content="en-us" />
+<title>MCB Emailer</title>
+
+<meta name="MSSmartTagsPreventParsing" content="true" />
+
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+
+<style type="text/css">
+a {color:#000;
+    cursor:pointer; }
+a:hover{ color:#006699;}
+
+a.sep_choice{ text-decoration:underline;}
+
+.form_err{color: #ff0000;}
+.err_box{width:280px; border:2px solid #ff0000; padding:10px; background-color:#fad4d4; margin:0 10px 10px 10px; line-height:170%; }
+.gb{width:280px;padding:10px; border:2px solid #77aa56; background-color:#e3f7df;line-height:170%; }
+#left_col_info_panel2{ width:100%;
+    xheight:650px;
+}
+#tbl_ec_results{ border-top:1px solid #333;
+    border-left:1px solid #333;
+}
+#tbl_ec_results td {
+    border-bottom:1px solid #333;
+    border-right:1px solid #333;
+}
+#tbl_ec_results th {
+    border-bottom:1px solid #333;
+    border-right:1px solid #333;
+}
+
+div.no_block{ height:15px; width:18px; background-color:#ff0000;}
+div.yes_block{ height:15px; width:18px; background-color:#6bb17c;}
+
+a.show_hide_choice_lnk{
+    cursor:pointer; 
+    text-decoration:none;
+    font-size:14px;
+    color:#006699;
+    line-height:160%;
+}
+
+div.choice_div{border:1px solid #ccc;
+    padding:10px;
+    margin:5px 0;
+     display:none;
+    }
+
+div.choice_div ul {
+   margin:0; padding:0;
+}
+
+div.choice_div ul li {
+   list-style-type:none; margin:0; padding:2px 0;
+}
+
+#id_clear_all_checkboxes{
+    text-decoration:underline;
+}
+
+</style>
+<link href="{{ MEDIA_URL }}mcb/css/base.css" rel="stylesheet" type="text/css" media="screen" />
+<script language="javascript"  src="{{ MEDIA_URL }}js/jquery-1.2.3.pack.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+<!--
+/* if adding new filter, 
+  -  add HTML div 
+  - .js changes in 3 places: update_email_list(); init function, add: set_check_uncheck_all(), set_show_hide_choice_links()
+*/
+var default_sep = 'comma';
+
+/* Retrieve all of the selected ids */
+function get_checked_ids(cname){
+
+    var checked_ids = new Array(); // init array 
+
+    // look up all checkboxes with this class
+    $('.' + cname).each(function(){
+        if ($(this).is(':checked') ) {
+            checked_ids.push($(this).val());    // add checked values to the array
+        }
+    });
+    if (checked_ids.length==0){
+        return '-1';
+    };
+    return checked_ids.join("|");
+}
+
+function check_all_boxes(cname){
+    $('.' + cname).each(function(){
+         $(this).attr('checked', true);
+     });
+}
+
+function clear_all_checkboxes(){
+    $('input:checkbox').each(function(){
+        $(this).attr('checked', false);
+    });    
+    update_email_list();
+}
+
+function uncheck_all_boxes(cname){
+    $('.' + cname).each(function(){
+         $(this).attr('checked', false);
+     });
+     
+}
+
+function update_email_list(){
+    
+    var lab_id_str = get_checked_ids('lab_choice');
+    var office_id_str = get_checked_ids('office_choice');
+    var pcat_str = get_checked_ids('pcat_choice');
+    var appt_str = get_checked_ids('appt_choice');
+    var title_str = get_checked_ids('title_choice');
+    var graduate_year_str = get_checked_ids('graduate_year_choice');
+    var email_data = { lab_ids : lab_id_str 
+                        ,office_ids : office_id_str 
+                        , pcat_ids : pcat_str
+                        , appt_ids : appt_str
+                        , title_ids : title_str
+                        , graduate_year_ids : graduate_year_str
+                        
+                        };
+    
+    
+    $.getJSON("{% if json_retrieve_emails_url %}{{ json_retrieve_emails_url }}{% else %}{% url view_email_search_results %}{% endif %}", email_data, function(data){
+        //alert(data);
+        if (data.success == false){
+            //alert(data.msg);
+            $('#msg_div').html(data.msg);
+            return;
+        }
+        
+        if (data.success == true){    
+            $('#msg_div').html(data.msg);
+            $('#id_email_addresses').val(data.email_str);
+            change_email_sep(default_sep);
+            $('#id_email_addresses').select();
+                           
+            return;
+        }
+
+        alert('Sorry!  The request did not work.  Please try again.');
+        
+    });
+}
+
+//set_show_hide_choice_links('#id_lab_link', '#id_lab_choice_div', '+ Show Labs', '- Hide Labs')
+function set_show_hide_choice_links(lnk_div, choice_div, show_text, hide_txt){
+    var show_office_txt = show_text;
+    $(lnk_div).html(show_office_txt);
+    $(lnk_div).click(function(){
+        lnk_val = $(this).html();
+        if (lnk_val == show_office_txt){
+            $(this).html(hide_txt);
+            $(choice_div).show();
+        }else{
+            $(this).html(show_office_txt);
+            $(choice_div).hide();
+        
+        }
+    });
+}
+
+function set_check_uncheck_all(id_str, class_str){
+    $(id_str).click(function(){
+        if ($(this).is(':checked') ) {
+            check_all_boxes(class_str);
+        }else{
+            uncheck_all_boxes(class_str);            
+        }
+        update_email_list();
+        
+	});
+}
+
+function change_email_sep(sep_type){
+     if (sep_type=='comma'){
+	      var mail_str = $('#id_email_addresses').val();        
+	      $('#id_email_addresses').val(mail_str.replace(/;/g, ','));
+	      default_sep = 'comma';
+	}else if (sep_type=='semicolon'){
+         var mail_str = $('#id_email_addresses').val();
+    	   $('#id_email_addresses').val(mail_str.replace(/,/g, ';'));
+          default_sep = 'semicolon';
+	}
+    
+}
+
+$(document).ready(function(){
+	
+	$('.cbox').click(function(){
+        update_email_list();
+	});
+	
+	$('#id_clear_all_checkboxes').click(function(){
+        clear_all_checkboxes();
+	});
+
+    $('a.sep_choice').click(function(){
+   	    change_email_sep(this.rel);
+   	});
+   	
+   	// check/uncheck all choices in a category
+    //
+	set_check_uncheck_all('#id_all_labs', 'lab_choice');
+	set_check_uncheck_all('#id_all_offices', 'office_choice');
+	set_check_uncheck_all('#id_all_personnel_categories', 'pcat_choice');
+	set_check_uncheck_all('#id_all_appointment_types', 'appt_choice');	
+	set_check_uncheck_all('#id_all_graduate_years', 'graduate_year_choice');	
+	set_check_uncheck_all('#id_all_titles', 'title_choice');
+
+
+    // show/hide sets of category links
+	set_show_hide_choice_links('#id_office_link', '#id_office_choice_div', '+ Show Offices', '- Hide Offices');
+	set_show_hide_choice_links('#id_lab_link', '#id_lab_choice_div', '+ Show MCB Labs', '- Hide MCB Labs');
+	set_show_hide_choice_links('#id_pcat_link', '#id_pcat_choice_div', '+ Show Personnel Categories', '- Hide Personnel Categories');
+	set_show_hide_choice_links('#id_appt_link', '#id_appt_choice_div', '+ Show Appt Types', '- Hide Appt Types');
+	set_show_hide_choice_links('#id_graduate_year_link', '#id_graduate_year_choice_div', '+ Show Graduate Years', '- Hide Graduate Years');
+	set_show_hide_choice_links('#id_title_link', '#id_title_choice_div', '+ Show Select Titles', '- Hide Select Titles');
+    
+});
+	  
+//-->
+</script>
+
+</head>
+<body>
+<div style="margin:20px 40px;">
+
+
+    
+    <div style="width:200px;  padding:10px 0px; font-weight:bold;font-size:120%;">
+        MCB Emailer &nbsp;
+    </div>
+    (<a href="http://www.mcb.harvard.edu/Directory/">return to the MCB directory</a>)
+
+<div style="padding:5px 0;"><!-- start: enclosing div -->
+    
+    <div style="float:left;width:250px;">  
+        <p>Please use the links below to retrieve
+        email addresses.
+        </p>
+        <a id="id_office_link" class="show_hide_choice_lnk">+ Show Offices</a>
+        <div id="id_office_choice_div" class="choice_div">
+        {{ office_form.as_p }}  
+        </div>  
+        
+        <br /><a id="id_lab_link" class="show_hide_choice_lnk">Show Labs</a>        
+        <div id="id_lab_choice_div"  class="choice_div">
+        {{ lab_form.as_p }}    
+        </div>  
+
+        <br /><a id="id_pcat_link" class="show_hide_choice_lnk">Show Personnel Cats</a>        
+        <div id="id_pcat_choice_div"  class="choice_div">
+        {{ personnel_category_form.as_p }}    
+        </div>  
+        
+        
+        <br /><a id="id_appt_link" class="show_hide_choice_lnk">Show Appt Types</a>        
+        <div id="id_appt_choice_div"  class="choice_div">
+        {{ appointment_type_form.as_p }}    
+        </div>
+        
+        <br /><a id="id_graduate_year_link" class="show_hide_choice_lnk">Show Graduate Years</a>        
+        <div id="id_graduate_year_choice_div"  class="choice_div">
+        {{ graduate_year_form.as_p }}    
+        </div>
+
+        
+        
+        <br /><a id="id_title_link" class="show_hide_choice_lnk">Show Selected Titles</a>        
+        <div id="id_title_choice_div"  class="choice_div">
+        {{ title_form.as_p }}    
+        </div>
+        
+    </div>    
+        
+<div style="float:left; padding:0; margin:0 0 0 40px;">    
+
+	
+            <h3>Email Addresses &nbsp; <span style="font-size:11px; font-weight:normal;">(<a id="id_clear_all_checkboxes">clear all emails and checkboxes</a>)</span></h3>
+            
+            <div id="msg_div" style="font-weight:bold;"></div>
+            <textarea id="id_email_addresses" rows="20" cols="45" name="expense_codes"></textarea>
+            <p>choose separator: <a rel="comma" class="sep_choice">comma ","</a>
+                    &nbsp;|&nbsp;  <a rel="semicolon" class="sep_choice">semicolon ";"</a></p>
+</div>    
+<div style="float:left;margin-left:40px;">    
+    <div id="clear_list">
+    </div>
+</div>
+    
+    <div class="clear"></div>
+</div><!-- end: enclosing div -->
+
+
+</div>
+</body>
+</html>

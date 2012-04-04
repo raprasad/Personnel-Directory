@@ -1,0 +1,29 @@
+{% for p in people %}
+{% spaceless %}
+{% if forloop.first %}<div id="psrch_results_table"><span style="font-size:80%">({% now "F jS, Y f:s a" %}
+    &nbsp; <a class="psrch_resubmit psrch_lnk" rel="{{ last_get_str }}">refresh results</a>)</span><br />
+{% include "person_directory/results_table_header.html" %}{% endif %}
+<tr>
+    <td>{{ forloop.counter }}</td>
+    <td>{{ p.lname }}</td>
+    <td>{{ p.fname }}</td>
+    <td>{% if p.grad_year %}{{ p.grad_year }}{% else %} -- {% endif %}</td>
+    <td>{% if p.primary_lab %}<a rel="lab={{ p.primary_lab.id }}" class="psrch_lnk psrch_resubmit">{{ p.primary_lab.name }}</a> {#% ifnotequal p.primary_lab.affiliation.name 'MCB' %}({{ p.primary_lab.affiliation }}){% endifnotequal %#}<br />{% endif %} {# primary lab #}  
+            {% for l in p.second_labs %}<a rel="lab={{ l.id }}" class="psrch_lnk psrch_resubmit">{{ l.name }}</a>  {#% ifnotequal l.affiliation.name 'MCB' %}({{ l.affiliation.name }}){% endifnotequal %#}<br />{% endfor %}    {# secondary labs #}
+            {% if p.office %}<a rel="office={{ p.office.id }}" class="psrch_lnk psrch_resubmit">{{ p.office.name }}</a> <br />{% endif %} {# office #}           
+           {% for office in p.second_offices %}<a rel="office={{ office.id }}" class="psrch_lnk psrch_resubmit">{{ office.name }}</a> <br />{% endfor %}    {# secondary offices #}
+    </td>
+    <td>{% if p.room and not p.is_office_address_private %}{{ p.room }}{% else %} -- {% endif %}</td>
+    <td>{% if p.phone  and not p.is_phone_private %}{{ p.phone }}{% else %} -- {% endif %}{% if p.second_phone and not p.is_phone_private %}<br />{{ p.second_phone }}{% endif %}</td>
+    <td>{% if p.email and not p.is_email_private %}<span class="psrch_mlink">{{ p.email  }}</span>{% else %} -- {% endif %}
+        {% if p.second_email  and not p.is_email_private %}<br /><span class="psrch_mlink">{{ p.second_email }}</span>{% endif %}</td>
+    <td>{% if p.title %}{{ p.title }}<br />{% else %} -- {% endif %}
+        {% for t in p.second_titles %}{{ t }}<br />{% endfor %}    {# secondary titles #}
+    </td>                
+    <td>{% if p.appointment %}{{ p.appointment }}{% else %} -- {% endif %}</td>         
+    {% comment %}{% endcomment %}
+</tr>  
+{% if forloop.last %}</table>
+</div>{% endif %}
+{% endspaceless %}  
+{% endfor %}

@@ -1,0 +1,21 @@
+#directory_search_div{text-align:left;}
+
+a.psrch_lnk{ cursor:pointer; text-decoration:underline; color:#003F65;}
+a.psrch_lnk:hover{ color:#ffcc00;}
+
+div.psrch_results_message{ padding:0; margin:0; text-align:center; font-size:13px; line-height:150%;}
+#psrch_results_table{padding:00px 0 20px 0;}
+#psrch_results_table table {border-bottom:1px solid #ccc; border-right:1px solid #ccc; margin:0; padding:0;}
+#psrch_results_table table tr:hover{background-color:#fafae8;}
+#psrch_results_table table th{font-weight:bold; border-top:1px solid #ccc; border-left:1px solid #ccc; padding:10px; background-color:#f1f1f1;}
+#psrch_results_table table td{border-top:1px solid #ccc; border-left:1px solid #ccc; padding:10px;}
+
+#psrch_mailing_info{width:450px; padding:20px 10px; line-height:145%; text-align:left; border:1px solid #ccc; background-color:#f1f1f1;}
+
+td.tdr {text-align:right;}
+
+.errbox_msg{border: 1px solid #ff0000; margin-right:auto;margin-left:auto; margin-top:20px; margin-bottom:20px; padding: 10px; width: 600px; font-size: 14px; text-align: center; line-height:175%;}
+
+#div_err_box{width:350px; border:1px solid #ff0000; padding:10px; background-color:#fad4d4; margin:10px;display:none;} 
+#div_msg_box{width:280px;padding:10px; border:1px solid #77aa56; background-color:#e3f7df; display:none;}    
+

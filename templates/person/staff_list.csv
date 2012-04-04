@@ -1,0 +1,7 @@
+email,firstName,lastName,Company,department,phoneNumber,Street,City,State,PostalCode,Country,location,migNotes,plannedMigDate,domain,atHarvardAlias,mailboxMigDate,userType,lab,otherDept,IMAPorXCH,otherDomain,XCH MB Size,IMAP MB Size
+{% for p in people %}{% ifchanged p.primary_lab %}
+{% endifchanged %}{% spaceless %}
+{{ p.email }},"{{ p.fname }}","{{ p.lname }}",FAS,{{ p.affiliation }},{{ p.phone }}{% if p.second_phone %} / {{ p.second_phone}}{% endif %},{% if p.building %}{{ p.building.addr1|safe }}{% if p.building.addr2 %}{{ p.building.addr2|safe }}{% endif %},{{ p.building.city|safe }},{{ p.building.state }},{{ p.building.zipcode }}{% else %},,,{% endif %},USA,{% if p.room %}"{{ p.room|safe }}"{% endif %},,,,,,{{ p.appointment|safe }},"{{ p.primary_lab.name|safe }}",{% if p.office %}"{{ p.office|safe }}"{% endif %},,{{ p.ad_username }}
+{% endspaceless %}
+{% endfor %}
+

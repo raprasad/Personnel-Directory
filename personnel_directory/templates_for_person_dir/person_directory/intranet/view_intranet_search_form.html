@@ -1,0 +1,26 @@
+
+{% if ERR_nothing_selected %}
+    <div id="div_err_box">Please make a choice</div>
+{% endif %}
+{%if ERR_query_clause_error %}
+<div id="div_err_box">Sorry!  There was a query error. Please try again.</div>
+{% endif %}
+
+<form action="{% url view_intranet_directory_search_form %}"  id="id_mcb_directory_form" method='get'>
+<input type="hidden" id="id_mcb_personnel_dir" name="id_mcb_personnel_dir" value="-1" />
+{% for field in text_form %}
+    <b>{{ field.label_tag }}</b>:  {{ field }} <input type="submit" name="submit" value="Go" />  
+    <br />{% if field.help_text %}<br />{{ field.help_text }}{% endif %}
+{% endfor %}
+
+<br />&nbsp;
+<p><b>List by Group</b></p>
+
+ {{ lab_form.as_p }}
+ {{ office_form.as_p }}  
+ {{ appointment_type_form.as_p }}
+ {{ graduate_year_form.as_p }}    
+ {{ title_form.as_p }}  
+ <input type="reset" name="reset" value="reset" />  
+ <input type="submit" name="submit" value="Go" />  
+</form>     

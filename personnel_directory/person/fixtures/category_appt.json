@@ -1,0 +1,181 @@
+[
+ {
+  "pk": 6, 
+  "model": "person.personnelcategory", 
+  "fields": {
+   "name": "Annual Academic"
+  }
+ }, 
+ {
+  "pk": 7, 
+  "model": "person.personnelcategory", 
+  "fields": {
+   "name": "Faculty"
+  }
+ }, 
+ {
+  "pk": 8, 
+  "model": "person.personnelcategory", 
+  "fields": {
+   "name": "Research"
+  }
+ }, 
+ {
+  "pk": 9, 
+  "model": "person.personnelcategory", 
+  "fields": {
+   "name": "Staff"
+  }
+ }, 
+ {
+  "pk": 10, 
+  "model": "person.personnelcategory", 
+  "fields": {
+   "name": "Student"
+  }
+ }, 
+ {
+  "pk": 17, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 6, 
+   "name": "Associate", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 26, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 9, 
+   "name": "Courtesy", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 22, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 7, 
+   "name": "Faculty", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 23, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 7, 
+   "name": "Faculty (Affiliate)", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 18, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 6, 
+   "name": "Fellow", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 30, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 10, 
+   "name": "Graduate Student", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 31, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 10, 
+   "name": "Graduate Student (non-MCB)", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 19, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 6, 
+   "name": "Lecturer", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 27, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 9, 
+   "name": "LHT", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 24, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 8, 
+   "name": "Postdoctoral Fellow", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 20, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 6, 
+   "name": "Preceptor", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 21, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 6, 
+   "name": "Research Associate", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 28, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 9, 
+   "name": "Staff", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 29, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 9, 
+   "name": "Temporary", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 32, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 10, 
+   "name": "Undergraduate Student", 
+   "description": ""
+  }
+ }, 
+ {
+  "pk": 25, 
+  "model": "person.appointmenttype", 
+  "fields": {
+   "personnel_category": 8, 
+   "name": "Visiting Scholar", 
+   "description": ""
+  }
+ }
+]
