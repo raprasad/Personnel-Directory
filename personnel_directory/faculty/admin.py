@@ -1,6 +1,6 @@
 from person.models import SecondaryTitle
 from faculty.models import *
-from person.admin import PersonAdmin
+#from person.admin import PersonAdmin
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
@@ -14,7 +14,8 @@ class GalleryImage_Inline(admin.TabularInline):
 
 class ResearchAreaAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display= ('name', 'url_name' )    
+    list_display= ('name', 'slug' )    
+    search_fields = ('name', )
 admin.site.register(ResearchArea, ResearchAreaAdmin)
 
 class FacultyLinkAdmin(admin.ModelAdmin):
@@ -27,14 +28,14 @@ class SecondaryTitleInline(admin.TabularInline):
   model = SecondaryTitle
   extra = 0
 
-class FacultyMemberAdmin(PersonAdmin):
+class FacultyMemberAdmin(admin.ModelAdmin):
     inlines = [SecondaryTitleInline, FacultyLink_Inline, GalleryImage_Inline]    # FacultyPublicationInline]
     save_on_top = True
     readonly_fields = ['privacy_info_link', 'profile_img_small', 'profile_img_medium']
     list_display = ('lname', 'fname', 'minitial', 'profile_img_small', 'profile_img_medium', 'email', 'phone','category', 'affiliation', 'appointment','title', 'visible')
     search_fields = ('lname','fname',  'email', 'second_email' )
     list_filter = ( 'visible','visible_profile', 'category', 'research_areas','affiliation', )
-    filter_horizontal = ( 'secondary_labs', 'research_areas',)
+    filter_horizontal = ( 'secondary_labs', 'research_areas', 'secondary_offices',)
     filter_vertical = ('secondary_titles', )
     #inlines = [ResearchInformationInline, ]
     
@@ -47,14 +48,15 @@ class FacultyMemberAdmin(PersonAdmin):
           ('Email', {'fields': ['email', 'second_email',]}),
           ('Phone', {'fields': ['phone', 'second_phone', ]}),
           ('User Names', {'fields': ['ad_username', 'fas_username',]}),
-          ('Visible on Web', {'fields': ['visible', 'visible_profile', 'in_harvard_directory']}),
+          ('Visible on Web', {'fields': ['visible', 'visible_profile', ]}),
           ('Physical Address', {'fields': ['room', 'building']}),
           ('Faculty Category', {'fields': ['category']}),
-          ('Position Information', {'fields': ['appointment', 'affiliation',  'title','secondary_titles' ,'office', 'secondary_offices',]}),
+          ('Position Information', {'fields': ['appointment', 'affiliation',  'title','secondary_titles' ,]}),
           ('Research Information', {'fields': ['research_description_title', 'research_description', 'research_summary', 'research_areas']}),
            ('Publications', {'fields': ['publication_html']}),
          
           ('Lab', {'fields': ['primary_lab', 'secondary_labs']}),
+          ('Offices', {'fields': ['office', 'secondary_offices']}),
           #('Graduate Information', {'fields': ['grad_program', 'grad_year',]}),
           ('Extra', {'fields': ['alt_search_term',]}),
 
@@ -64,7 +66,7 @@ admin.site.register(FacultyMember, FacultyMemberAdmin)
 
 class FacultyCategoryAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display= ('name', 'url_name' )
+    list_display= ('name', 'slug' )
 admin.site.register(FacultyCategory, FacultyCategoryAdmin)
 
 class GalleryImageAdmin(admin.ModelAdmin):

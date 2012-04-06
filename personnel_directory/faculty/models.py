@@ -7,13 +7,13 @@ from person.models import Person
 
 class FacultyCategory(models.Model):
     name = models.CharField(max_length=255)
-    url_name = models.CharField(max_length=255, blank=True)
+    slug = models.SlugField(max_length=255, blank=True)
 
     def __unicode__(self):
         return self.name
       
     def save(self):
-        self.url_name =  slugify(self.name)
+        self.slug =  slugify(self.name)
 
         super(FacultyCategory, self).save()        # Call the "real" save() method.
       
@@ -25,10 +25,10 @@ class FacultyCategory(models.Model):
 class ResearchArea(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    url_name = models.CharField(max_length=255, blank=True)
+    slug = models.SlugField(max_length=255, blank=True)
 
     def save(self):
-        self.url_name =  slugify(self.name)
+        self.slug =  slugify(self.name)
 
         super(ResearchArea, self).save()        # Call the "real" save() method.
       
