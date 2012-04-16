@@ -1,6 +1,11 @@
+import os
+import Image
+from django.conf import settings
+
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.encoding import force_unicode 
+from django.db.models.signals import post_save      
 
 from django.contrib.localflavor.us.models import USStateField, PhoneNumberField
 from django.core.urlresolvers import reverse
@@ -12,6 +17,12 @@ import hashlib
 
 MCB_AFFILIATION_ID = 1
 APPOINTMENT_TYPE_ID_MCB_GRADUATE_STUDENT = 30
+
+PERSON_PROFILE_IMAGE_SIZE = 150
+PERSON_PROFILE_THUMB_IMAGE_SIZE = 100
+
+THUMB_UPLOAD_TO = os.path.join('person', 'thumb')
+PROFILE_UPLOAD_TO = os.path.join('person', 'profile')
 
 class PersonAffiliation(models.Model):
     """Default is MCB -- if no appointment clear, indicate home institution / department"""
@@ -195,6 +206,11 @@ class Person(models.Model):
         
     alt_search_term = models.CharField(max_length=255, blank=True, help_text='e.g. "Oshea" if name is "O\'shea"')
     
+    profile_image = models.ImageField(upload_to=PROFILE_UPLOAD_TO, help_text='Proportionately Resized to (%s x %s)' % (PERSON_PROFILE_IMAGE_SIZE, PERSON_PROFILE_IMAGE_SIZE),blank=True, null=True)   
+
+    thumb_image = models.ImageField(upload_to=THUMB_UPLOAD_TO, help_text='Auto-filled, Proportionately Resized to (%s x %s)' % (PERSON_PROFILE_THUMB_IMAGE_SIZE, PERSON_PROFILE_THUMB_IMAGE_SIZE),  blank=True, null=True)
+    
+    
     id_hash = models.CharField(max_length=100, blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
@@ -301,6 +317,59 @@ class Person(models.Model):
                , info=pinfo)
         dp.save()
 
+    def thumb_view(self):
+        if self.thumb_image:
+            return '<a href="%s"  target="_blank"><img src="%s" style="border:1px solid #333;" alt="thumb" /></a>' % (self.profile_image.url, self.thumb_image.url)
+        return '(n/a)'
+    thumb_view.allow_tags= True
+
+    def profile_view(self):
+        if self.profile_image:
+            return '<img src="%s" style="border:1px solid #333;" alt="main" />' % (self.profile_image.url)
+        return '(n/a)'
+    profile_view.allow_tags= True
+
+    @staticmethod
+    def update_image_sizes( sender, **kwargs):
+        # if main image is too big, resize it; make a thumbnail image
+        img_rec = kwargs.get('instance', None)
+        if img_rec is None:
+            return
+
+        # (1) resize main image
+        if img_rec.profile_image.width > PERSON_PROFILE_IMAGE_SIZE or img_rec.profile_image.height > MAX_MAIN_IMAGE_WIDTH:
+            im = Image.open(img_rec.profile_image.file.name)   # open image
+            im.thumbnail((PERSON_PROFILE_IMAGE_SIZE, PERSON_PROFILE_IMAGE_SIZE), Image.ANTIALIAS) # resize
+            im.save(img_rec.profile_image.file.name, quality=90)   #save
+       
+        # (2) make a thumbnail
+        thumb = Image.open(img_rec.profile_image.file.name)    # open the main image
+        thumb.thumbnail((PERSON_PROFILE_THUMB_IMAGE_SIZE, PERSON_PROFILE_THUMB_IMAGE_SIZE), Image.ANTIALIAS)
+
+        thumb_full_dirname = os.path.join(settings.MEDIA_ROOT, THUMB_UPLOAD_TO)
+        thumb_full_filename = os.path.join(thumb_full_dirname, os.path.basename(img_rec.profile_image.path) )
+
+        # if needed, make thumb directory
+        if not os.path.isdir(thumb_full_dirname):
+            os.makedirs(thumb_full_dirname)
+        # save file
+        ext = thumb_full_filename.split('.')[-1].lower()
+        if ext not in ['gif', 'jpeg', 'jpg', 'png']:
+            thumb.save(thumb_full_filename, "JPEG", quality=100)
+        else:
+            thumb.save(thumb_full_filename, quality=100)
+
+        # disconnect save signal, save the ImageRecord, and reconnect signal
+        post_save.disconnect(Person.update_image_sizes, sender=Person)        
+        
+        # update/save django model
+        img_rec.thumb_image.name = os.path.join(THUMB_UPLOAD_TO, os.path.basename(img_rec.profile_image.path) ) 
+       
+        img_rec.save()
+        
+        # reconnect save signal
+        post_save.connect(Person.update_image_sizes, sender=Person)
+post_save.connect(Person.update_image_sizes, sender=Person)
 
 class SecondaryTitle(models.Model):
     person = models.ForeignKey(Person)

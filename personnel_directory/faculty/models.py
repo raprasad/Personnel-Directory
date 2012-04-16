@@ -61,8 +61,8 @@ class FacultyMember(Person):
     research_description = models.TextField(blank=True)
     publication_html = models.TextField(blank=True)
     
-    profile_sm_image = models.ImageField(upload_to='faculty/profile', help_text='Small Profile Image (62 x 62), directory: MCB Internet/Faculty/Images/',  blank=True, null=True)
-    profile_med_image = models.ImageField(upload_to='faculty/profile', help_text='Medium Profile Image (130 x 154), directory: MCB Internet/Faculty/Images/',blank=True, null=True)   
+    profile_sm_image = models.ImageField(upload_to='faculty/profile', help_text='Small Profile Image (62 x 62)',  blank=True, null=True)
+    profile_med_image = models.ImageField(upload_to='faculty/profile', help_text='Medium Profile Image (130 x 154)',blank=True, null=True)   
     
     tags = models.ManyToManyField(Tag, null=True, blank=True)
 

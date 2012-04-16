@@ -74,7 +74,7 @@ class SecondaryTitleInline(admin.TabularInline):
     
 class PersonAdmin(admin.ModelAdmin):
     save_on_top = True
-    readonly_fields = ['privacy_info_link', 'date_added', 'date_modified', 'id_hash']
+    readonly_fields = ['privacy_info_link', 'date_added', 'date_modified', 'id_hash', 'profile_view', 'thumb_view']
     list_display = ('lname', 'fname', 'minitial', 'privacy_info_link', 'email', 'phone','affiliation', 'appointment','title','primary_lab', 'grad_year','office', 'visible')
     search_fields = ('lname','fname',  'email', 'second_email' )
     list_filter = ( 'visible','building', 'appointment','affiliation', 'grad_year','grad_program', 'office', 'primary_lab')
@@ -95,6 +95,7 @@ class PersonAdmin(admin.ModelAdmin):
           ('Lab', {'fields': ['primary_lab', 'secondary_labs']}),
           ('Graduate Information', {'fields': ['grad_program', 'grad_year',]}),
           ('Extra', {'fields': ['alt_search_term',]}),
+          ('Images', {'fields': ['profile_image', 'thumb_image', 'profile_view', 'thumb_view']}),
           ('Internal Info', {'fields': ['date_added', 'date_modified', 'id_hash']}),
 
       ]
