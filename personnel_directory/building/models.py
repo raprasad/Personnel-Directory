@@ -32,6 +32,17 @@ class Building(models.Model):
     class Meta:
         ordering = ('name',)
 
+    def address_col_for_web(self):
+        if self.addr2:
+            return '''%s
+            <br />%s
+            <br />%s
+            <br />%s, %s &nbsp;%s''' % (self.name, self.addr1, self.addr2, self.city, self.state, self.zipcode)
+        else:
+            return '''%s
+            <br />%s
+            <br />%s, %s &nbsp;%s''' % (self.name, self.addr1,self.city, self.state, self.zipcode)
+            
     def address_col(self):
         if self.addr2:
             return '%s, %s, %s %s %s, %s' % (self.name, self.addr1, self.addr2, self.city, self.zipcode, self.state)

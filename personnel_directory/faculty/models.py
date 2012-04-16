@@ -4,10 +4,15 @@ from django.contrib.localflavor.us.models import USStateField, PhoneNumberField
 from django.db import models
 from django.template.defaultfilters import slugify
 from person.models import Person
+from tags.models import Tag
+from django.core.urlresolvers import reverse
+
+EMIRITI_FACULTY_CATEGORY_ID = 4
 
 class FacultyCategory(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, blank=True)
+    sort_order = models.IntegerField(default=5)
 
     def __unicode__(self):
         return self.name
@@ -18,7 +23,7 @@ class FacultyCategory(models.Model):
         super(FacultyCategory, self).save()        # Call the "real" save() method.
       
     class Meta:
-        ordering = ('name',)
+        ordering = ('sort_order', 'name',)
         verbose_name_plural = 'Faculty Categories'
 
         
@@ -59,9 +64,11 @@ class FacultyMember(Person):
     profile_sm_image = models.ImageField(upload_to='faculty/profile', help_text='Small Profile Image (62 x 62), directory: MCB Internet/Faculty/Images/',  blank=True, null=True)
     profile_med_image = models.ImageField(upload_to='faculty/profile', help_text='Medium Profile Image (130 x 154), directory: MCB Internet/Faculty/Images/',blank=True, null=True)   
     
+    tags = models.ManyToManyField(Tag, null=True, blank=True)
+
     def get_absolute_url(self):
-        return 'http://www.mcb.harvard.edu/Faculty/faculty_profile.php?f=%s' % self.url_name   #howard-berg-c
-    
+        return reverse('view_faculty_profile', kwargs={ 'slug' : self.slug }) 
+            
     def profile_img_medium(self):
         if not self.profile_med_image:
             return '(no image)'
@@ -76,7 +83,21 @@ class FacultyMember(Person):
         return '<img src="%s" alt="profile img" />' % (self.profile_sm_image.url)
     profile_img_small.allow_tags = True
 
-    
+    @staticmethod 
+    def get_non_emiriti_faculty():
+        return FacultyMember.objects.filter(visible=True\
+                , visible_profile=True).exclude(category__id=EMIRITI_FACULTY_CATEGORY_ID)
+
+    @staticmethod 
+    def get_emiriti_faculty():
+        return FacultyMember.objects.filter(visible=True\
+                            , visible_profile=True\
+                            , category__id=EMIRITI_FACULTY_CATEGORY_ID)
+
+
+    class Meta:
+        ordering = ('category', 'lname', 'fname',)  
+        
     #def save(self):
 
     #    super(FacultyMember, self).save()        # Call the "real" save() method.

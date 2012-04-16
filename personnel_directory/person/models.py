@@ -8,7 +8,11 @@ from django.template.defaultfilters import slugify
 from building.models import Building
 from django.template.loader import render_to_string
 
+import hashlib
+
 MCB_AFFILIATION_ID = 1
+APPOINTMENT_TYPE_ID_MCB_GRADUATE_STUDENT = 30
+
 class PersonAffiliation(models.Model):
     """Default is MCB -- if no appointment clear, indicate home institution / department"""
     name = models.CharField(max_length=255, unique=True)
@@ -85,16 +89,18 @@ class Lab(models.Model):
         
         self.url = slugify(self.name)
         
+        
         super(Lab, self).save()        # Call the "real" save() method.
 
     def get_absolute_url(self):
         return 'http://www.mcb.harvard.edu/Directory/search_results.php?v=%s&ltype=lab' % self.id
 
     def lab_spreadsheet(self):
-        if self.id:
-            change_url = reverse('view_lab_member_excel_file', kwargs={ 'lab_id' : self.id })
-            return '<a href="%s">download Excel (.xls) file</a>' % change_url
-        return ''
+        return 'to do'
+        #if self.id:
+        #    change_url = reverse('view_lab_member_excel_file', kwargs={ 'lab_id' : self.id })
+        #    return '<a href="%s">download Excel (.xls) file</a>' % change_url
+        #return ''
         
     lab_spreadsheet.allow_tags = True
     
@@ -189,8 +195,16 @@ class Person(models.Model):
         
     alt_search_term = models.CharField(max_length=255, blank=True, help_text='e.g. "Oshea" if name is "O\'shea"')
     
+    id_hash = models.CharField(max_length=100, blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+    
     def save(self):
-            
+        if self.id is None:
+            super(Person, self).save()
+
+        self.id_hash =  hashlib.sha1('%s%s' % (self.id, str(self.date_modified))).hexdigest()
+
         # have email with '@mcb.harvard.edu', but not ad_username,
         # make copy email ad_username
         #
@@ -258,7 +272,9 @@ class Person(models.Model):
            return self.building.name
        return None
 
-
+    def get_secondary_titles(self):
+        return SecondaryTitle.objects.filter(person=self)
+        
     @staticmethod
     def get_person_text_info(person):
        """Used in pre-delete"""

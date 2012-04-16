@@ -216,7 +216,7 @@ def retrieve_directory_search_results(request, is_departmental_intranet=False):
         form_info_dict = prepare_form_dropdown_criteria_names_and_filter(request)
 
     if form_info_dict is None:
-        msgt('--2--')
+        #msgt('--2--')
         lu.update({'ERR_nothing_selected': True }); return lu
     
     try:

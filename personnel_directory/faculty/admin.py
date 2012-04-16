@@ -20,7 +20,9 @@ admin.site.register(ResearchArea, ResearchAreaAdmin)
 
 class FacultyLinkAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display= ('faculty_member', 'name', )   
+    search_fields = ('name', )
+    
+    list_display= ('faculty_member', 'name', 'url',)   
 admin.site.register(FacultyLink, FacultyLinkAdmin)
 
 
@@ -31,11 +33,11 @@ class SecondaryTitleInline(admin.TabularInline):
 class FacultyMemberAdmin(admin.ModelAdmin):
     inlines = [SecondaryTitleInline, FacultyLink_Inline, GalleryImage_Inline]    # FacultyPublicationInline]
     save_on_top = True
-    readonly_fields = ['privacy_info_link', 'profile_img_small', 'profile_img_medium']
+    readonly_fields = ['privacy_info_link', 'profile_img_small', 'profile_img_medium', 'date_added', 'date_modified', 'id_hash']
     list_display = ('lname', 'fname', 'minitial', 'profile_img_small', 'profile_img_medium', 'email', 'phone','category', 'affiliation', 'appointment','title', 'visible')
     search_fields = ('lname','fname',  'email', 'second_email' )
     list_filter = ( 'visible','visible_profile', 'category', 'research_areas','affiliation', )
-    filter_horizontal = ( 'secondary_labs', 'research_areas', 'secondary_offices',)
+    filter_horizontal = ( 'secondary_labs', 'research_areas', 'secondary_offices', 'tags',)
     filter_vertical = ('secondary_titles', )
     #inlines = [ResearchInformationInline, ]
     
@@ -59,6 +61,8 @@ class FacultyMemberAdmin(admin.ModelAdmin):
           ('Offices', {'fields': ['office', 'secondary_offices']}),
           #('Graduate Information', {'fields': ['grad_program', 'grad_year',]}),
           ('Extra', {'fields': ['alt_search_term',]}),
+          ('Tags', {'fields': ['tags',]}),
+          ('Internal Info', {'fields': ['date_added', 'date_modified', 'id_hash']}),
 
       ]
     
@@ -66,7 +70,7 @@ admin.site.register(FacultyMember, FacultyMemberAdmin)
 
 class FacultyCategoryAdmin(admin.ModelAdmin):
     save_on_top = True
-    list_display= ('name', 'slug' )
+    list_display= ('name', 'sort_order', 'slug' )
 admin.site.register(FacultyCategory, FacultyCategoryAdmin)
 
 class GalleryImageAdmin(admin.ModelAdmin):
