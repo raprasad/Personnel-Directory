@@ -337,7 +337,7 @@ class Person(models.Model):
             return
 
         # (1) resize main image
-        if img_rec.profile_image.width > PERSON_PROFILE_IMAGE_SIZE or img_rec.profile_image.height > MAX_MAIN_IMAGE_WIDTH:
+        if img_rec.profile_image.width > PERSON_PROFILE_IMAGE_SIZE or img_rec.profile_image.height > PERSON_PROFILE_IMAGE_SIZE:
             im = Image.open(img_rec.profile_image.file.name)   # open image
             im.thumbnail((PERSON_PROFILE_IMAGE_SIZE, PERSON_PROFILE_IMAGE_SIZE), Image.ANTIALIAS) # resize
             im.save(img_rec.profile_image.file.name, quality=90)   #save
