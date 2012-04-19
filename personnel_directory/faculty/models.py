@@ -1,3 +1,5 @@
+from django.contrib.auth.models import User
+
 from django.contrib.localflavor.us.models import USStateField, PhoneNumberField
 from django.db import models
 from django.template.defaultfilters import slugify
@@ -10,10 +12,7 @@ EMIRITI_FACULTY_CATEGORY_ID = 4
 class FacultyCategory(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, blank=True)
-<<<<<<< HEAD
     sort_order = models.IntegerField(default=5)
-=======
->>>>>>> updated model, renaming url_name to slug
 
     def __unicode__(self):
         return self.name
@@ -44,15 +43,18 @@ class ResearchArea(models.Model):
     class Meta:
         ordering = ('name',)
         
-             
+      
+        
+     
+
+# Create your models here.
 class FacultyMember(Person):
     
     visible_profile = models.BooleanField(default=True)
     
-    category = models.ForeignKey(FacultyCategory, null=True, blank=True, on_delete=models.PROTECT)
+    category = models.ForeignKey(FacultyCategory, null=True)
     
-    research_areas = models.ManyToManyField(ResearchArea, null=True, blank=True)  
-    
+    research_areas = models.ManyToManyField(ResearchArea, null=True, blank=True, on_delete=models.PROTECT))   
     research_summary = models.TextField(blank=True)
 
     research_description_title = models.CharField(max_length=255, blank=True)
@@ -141,7 +143,7 @@ class GalleryImage(models.Model):
         if not self.gallery_img:
             return '(no image)'
 
-        return 'forced to 150px wide<br /><img src="%s" alt="gallery img" width="150" />' % (self.gallery_img.url)
+        return 'click for full size (%sx%s)<br /><a href="%s" target="_blank"><img src="%s" alt="gallery img" width="150" /></a>' % (self.gallery_img.width, self.gallery_img.height, self.gallery_img.url, self.gallery_img.url)
     gallery_image.allow_tags = True
 
     def gallery_image_small(self):
