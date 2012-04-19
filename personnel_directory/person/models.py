@@ -78,7 +78,7 @@ class AppointmentType(models.Model):
     
     name = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=150, blank=True)
-    personnel_category = models.ForeignKey(PersonnelCategory)
+    personnel_category = models.ForeignKey(PersonnelCategory, on_delete=models.PROTECT)
 
     def __unicode__(self):
         return self.name
@@ -89,7 +89,7 @@ class AppointmentType(models.Model):
 class Lab(models.Model):
     name = models.CharField(max_length=255, unique=True)
     url = models.SlugField('slug', blank=True)
-    affiliation = models.ForeignKey(PersonAffiliation)
+    affiliation = models.ForeignKey(PersonAffiliation, on_delete=models.PROTECT)
     name_affil = models.CharField(max_length=255, blank=True, help_text='auto-filled on save')
     
     def save(self):
@@ -186,22 +186,22 @@ class Person(models.Model):
     visible = models.BooleanField(default=True)
 
     room = models.CharField(max_length=75, blank=True)
-    building = models.ForeignKey(Building, null=True, blank=True)
+    building = models.ForeignKey(Building, null=True, blank=True, on_delete=models.PROTECT)
 
-    appointment = models.ForeignKey( AppointmentType, null=True, blank=True)
-    affiliation = models.ForeignKey(PersonAffiliation, help_text='home institution, usually MCB')
-    title = models.ForeignKey(PersonTitle, null=True, blank=True)
+    appointment = models.ForeignKey( AppointmentType, null=True, blank=True, on_delete=models.PROTECT)
+    affiliation = models.ForeignKey(PersonAffiliation, help_text='home institution, usually MCB', on_delete=models.PROTECT)
+    title = models.ForeignKey(PersonTitle, null=True, blank=True, on_delete=models.PROTECT)
     secondary_titles = models.ManyToManyField(PersonTitle, null=True, blank=True, related_name='secondary titles')
 
     long_title = models.TextField(blank=True, help_text='optional')
 
-    grad_program = models.ForeignKey(GraduateProgram, null=True, blank=True)
-    grad_year = models.ForeignKey(GraduateYear, null=True, blank=True)
+    grad_program = models.ForeignKey(GraduateProgram, null=True, blank=True, on_delete=models.PROTECT)
+    grad_year = models.ForeignKey(GraduateYear, null=True, blank=True, on_delete=models.PROTECT)
 
-    office = models.ForeignKey(Office, null=True, blank=True, help_text='optional')
+    office = models.ForeignKey(Office, null=True, blank=True, help_text='optional', on_delete=models.PROTECT)
     secondary_offices = models.ManyToManyField(Office, null=True, blank=True, related_name='secondary offices')
     
-    primary_lab = models.ForeignKey(Lab, null=True, blank=True)
+    primary_lab = models.ForeignKey(Lab, null=True, blank=True, on_delete=models.PROTECT)
     secondary_labs = models.ManyToManyField(Lab, null=True, blank=True, related_name='secondary labs')
         
     alt_search_term = models.CharField(max_length=255, blank=True, help_text='e.g. "Oshea" if name is "O\'shea"')
@@ -373,7 +373,7 @@ post_save.connect(Person.update_image_sizes, sender=Person)
 
 class SecondaryTitle(models.Model):
     person = models.ForeignKey(Person)
-    title = models.ForeignKey(PersonTitle)
+    title = models.ForeignKey(PersonTitle, on_delete=models.PROTECT)
     sort_order = models.IntegerField()
     
     def __unicode__(self):
@@ -401,7 +401,7 @@ class DeletedPerson(models.Model):
         ordering = ('lname', 'fname',)  
        
 class ResearchInformation(models.Model):
-    person = models.ForeignKey(Person)
+    person = models.ForeignKey(Person, on_delete=models.PROTECT)
     research_short_desc = models.TextField()
     research_long_desc = models.TextField(blank=True)
     

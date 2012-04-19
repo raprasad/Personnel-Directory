@@ -1,5 +1,3 @@
-from django.contrib.auth.models import User
-
 from django.contrib.localflavor.us.models import USStateField, PhoneNumberField
 from django.db import models
 from django.template.defaultfilters import slugify
@@ -12,7 +10,10 @@ EMIRITI_FACULTY_CATEGORY_ID = 4
 class FacultyCategory(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, blank=True)
+<<<<<<< HEAD
     sort_order = models.IntegerField(default=5)
+=======
+>>>>>>> updated model, renaming url_name to slug
 
     def __unicode__(self):
         return self.name
@@ -43,18 +44,15 @@ class ResearchArea(models.Model):
     class Meta:
         ordering = ('name',)
         
-      
-        
-     
-
-# Create your models here.
+             
 class FacultyMember(Person):
     
     visible_profile = models.BooleanField(default=True)
     
-    category = models.ForeignKey(FacultyCategory, null=True)
+    category = models.ForeignKey(FacultyCategory, null=True, blank=True, on_delete=models.PROTECT)
     
-    research_areas = models.ManyToManyField(ResearchArea, null=True, blank=True)    # filter_interface=models.HORIZONTAL,
+    research_areas = models.ManyToManyField(ResearchArea, null=True, blank=True)  
+    
     research_summary = models.TextField(blank=True)
 
     research_description_title = models.CharField(max_length=255, blank=True)
