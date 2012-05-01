@@ -54,7 +54,7 @@ class FacultyMember(Person):
     
     category = models.ForeignKey(FacultyCategory, null=True)
     
-    research_areas = models.ManyToManyField(ResearchArea, null=True, blank=True, on_delete=models.PROTECT)
+    research_areas = models.ManyToManyField(ResearchArea, null=True, blank=True)
     research_summary = models.TextField(blank=True)
 
     research_description_title = models.CharField(max_length=255, blank=True)
