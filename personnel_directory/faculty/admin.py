@@ -76,8 +76,9 @@ admin.site.register(FacultyCategory, FacultyCategoryAdmin)
 class GalleryImageAdmin(admin.ModelAdmin):
     save_on_top = True
     readonly_fields = ( 'gallery_image', 'gallery_image_small',)
-    list_display = ('faculty_member', 'name', 'visible', 'gallery_image', 'gallery_image_small')
-    list_filter = ('visible',)
+    list_editable = ('rotate_on_homepage', 'visible', )
+    list_display = ('faculty_member',  'name', 'rotate_on_homepage', 'visible', 'gallery_image', 'gallery_image_small')
+    list_filter = ('visible', 'rotate_on_homepage',)
 admin.site.register(GalleryImage, GalleryImageAdmin)
 
 

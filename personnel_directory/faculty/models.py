@@ -122,6 +122,7 @@ class GalleryImage(models.Model):
     
     name = models.CharField(max_length=255)
     visible = models.BooleanField(default=True)
+    rotate_on_homepage = models.BooleanField(default=True)
     description = models.TextField(blank=True)
     teaser = models.TextField(blank=True)
 
