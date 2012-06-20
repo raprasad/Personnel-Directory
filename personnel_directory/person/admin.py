@@ -87,7 +87,7 @@ class PersonAdmin(admin.ModelAdmin):
     search_fields = ('lname','fname',  'email', 'second_email' )
     list_filter = ( 'visible','building', 'appointment','affiliation', 'grad_year','grad_program', 'office', 'primary_lab')
     filter_horizontal = ( 'secondary_labs',)
-    filter_vertical = ('secondary_titles',)
+    #filter_vertical = ('secondary_titles',)
     inlines = [SecondaryTitleInline, ResearchInformationInline, ]
     
     # list_editable = ('email','phone','fname',)# 'lname',)
@@ -99,7 +99,7 @@ class PersonAdmin(admin.ModelAdmin):
           ('User Names', {'fields': ['ad_username', 'fas_username',]}),
           ('Visible on Web', {'fields': ['visible', ]}),
           ('Physical Address', {'fields': ['room', 'building']}),
-          ('Position Information', {'fields': ['appointment', 'affiliation', 'office', 'title','secondary_titles']}),
+          ('Position Information', {'fields': ['appointment', 'affiliation', 'office', 'title',]}), #'secondary_titles']}),
           ('Lab', {'fields': ['primary_lab', 'secondary_labs']}),
           ('Graduate Information', {'fields': ['grad_program', 'grad_year',]}),
           ('Extra', {'fields': ['alt_search_term',]}),
