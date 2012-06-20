@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 
+
 class PersonAffiliationAdmin(admin.ModelAdmin):
     save_on_top = True
     search_fields = ('name',)
@@ -14,6 +15,13 @@ class PersonnelCategoryAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     
 admin.site.register(PersonnelCategory, PersonnelCategoryAdmin)
+
+class SecondaryTitleAdmin(admin.ModelAdmin):
+    save_on_top = True
+    search_fields = ('title',)
+    list_display= ('title', 'person', 'sort_order')
+admin.site.register(SecondaryTitle, SecondaryTitleAdmin)
+
 
 
 class AppointmentTypeAdmin(admin.ModelAdmin):

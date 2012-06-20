@@ -335,8 +335,12 @@ def add_privacy_info_and_remove_blocked_persons(people, is_internal_client=True,
         #            
         for attr, privacy_attr in privacy_lu.iteritems():
             if person.hu_info:
-                    if person.hu_info.__dict__.get(attr, 1) < 4:            # less than 4 -> cannot display   (if not found, default to lowest level)
+                    if person.hu_info.__dict__.get(attr, 1) < 4:            # (a) less than 4 -> cannot display   (if not found, default to lowest level)
                         person.__dict__.update({privacy_attr : True})
+                    elif person.hu_info.__dict__.get(attr, 1) == 4 and is_departmental_intranet:  # (b) equal to 4 and logged in -> display
+                        # logged into mcb
+                        person.__dict__.update({privacy_attr : False})
+                        
                     elif person.hu_info.__dict__.get(attr, 1) == 4 and not is_internal_client:  # equal to 4 and outside harvard network -> cannot display
                         person.__dict__.update({privacy_attr : True})
                     else:
