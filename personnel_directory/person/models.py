@@ -332,8 +332,9 @@ class Person(models.Model):
     @staticmethod
     def update_image_sizes( sender, **kwargs):
         # if main image is too big, resize it; make a thumbnail image
+        #return
         img_rec = kwargs.get('instance', None)
-        if img_rec is None:
+        if img_rec is None or (not img_rec.profile_image) :
             return
 
         # (1) resize main image
