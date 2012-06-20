@@ -38,7 +38,7 @@ class FacultyMemberAdmin(admin.ModelAdmin):
     search_fields = ('lname','fname',  'email', 'second_email' )
     list_filter = ( 'visible','visible_profile', 'category', 'research_areas','affiliation', )
     filter_horizontal = ( 'secondary_labs', 'research_areas', 'secondary_offices', 'tags',)
-    filter_vertical = ('secondary_titles', )
+    #filter_vertical = ('secondary_titles', )
     #inlines = [ResearchInformationInline, ]
     
     # list_editable = ('email','phone','fname',)# 'lname',)
@@ -53,7 +53,7 @@ class FacultyMemberAdmin(admin.ModelAdmin):
           ('Visible on Web', {'fields': ['visible', 'visible_profile', ]}),
           ('Physical Address', {'fields': ['room', 'building']}),
           ('Faculty Category', {'fields': ['category']}),
-          ('Position Information', {'fields': ['appointment', 'affiliation',  'title','secondary_titles' ,]}),
+          ('Position Information', {'fields': ['appointment', 'affiliation',  'title',]}),#'secondary_titles' ,]}),
           ('Research Information', {'fields': ['research_description_title', 'research_description', 'research_summary', 'research_areas']}),
            ('Publications', {'fields': ['publication_html']}),
          
