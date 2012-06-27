@@ -83,7 +83,7 @@ def view_directory_excel_file(request):
         people = Person.objects.select_related('office', 'building', 'primary_lab', 'title', 'appointment', 'affiliation', 'secondary_titles', 'secondary_labs', 'grad_program', 'grad_year').filter(visible=True).order_by('lname', 'fname')
    
     if people.count() == 0:
-        return HttpResponse('Sorry!  No trainees are in this list.<br /><br />Please press the back button on your browser.')
+        return HttpResponse('Sorry!  No people were found for this list.<br /><br />Please press the back button on your browser.')
     
     book = xlwt.Workbook(encoding="utf-8")
     # With a workbook object made we can now add some sheets.

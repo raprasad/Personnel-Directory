@@ -107,12 +107,10 @@ class Lab(models.Model):
         return 'http://www.mcb.harvard.edu/Directory/search_results.php?v=%s&ltype=lab' % self.id
 
     def lab_spreadsheet(self):
-        return 'to do'
-        #if self.id:
-        #    change_url = reverse('view_lab_member_excel_file', kwargs={ 'lab_id' : self.id })
-        #    return '<a href="%s">download Excel (.xls) file</a>' % change_url
-        #return ''
-        
+        if self.id:
+            change_url = reverse('view_directory_excel_file', kwargs={})
+            return '<a href="%s?primary_lab__id__exact=%s">download Excel (.xls) file</a>' % (change_url, self.id)
+        return '(n/a)'
     lab_spreadsheet.allow_tags = True
     
     def __unicode__(self):
