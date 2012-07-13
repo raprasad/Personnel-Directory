@@ -116,12 +116,12 @@ class HUDirectorySearcher:
             msg('ERROR: filter had UnicodeEncodeError')
             return None
         
-        msg('search complete - raw results:')
-        dashes()
-        print results
-        dashes()
-        msg('formatted results')
-        dashes()
+        #msg('search complete - raw results:')
+        #dashes()
+        #print results
+        #dashes()
+        #msg('formatted results')
+        #dashes()
         
         members = []
         for idx, r in enumerate(results):
