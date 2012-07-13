@@ -6,7 +6,9 @@ if __name__=='__main__':
     # import django settings
     #-------------------------
     import os, sys
-    sys.path.append('../../mcb')
+    #pths = 
+    sys.path.append('/var/webapps/django/MCB-Website/')
+    sys.path.append('/var/webapps/django/MCB-Website/mcb_website')
     from django.core.management import setup_environ
     import settings
     setup_environ(settings)
@@ -20,8 +22,9 @@ from helper_classes import MemberInfo
 
 # Please fill these in
 #
-CUSTOMER_NAME = 'mcb'   # username/id for binding to ldap server   
-CUSTOMER_PW = '*9xfJfWc' # password for binding to ldap server   
+CUSTOMER_NAME =  settings.LDAP_CUSTOMER_NAME #''   # username/id for binding to ldap server   
+CUSTOMER_PW = settings.LDAP_CUSTOMER_PASSWORD  #'' # password for binding to ldap server   
+LDAP_SERVER = settings.LDAP_SERVER
 
 # Set LDAP options
 ldap.set_option(ldap.OPT_REFERRALS, 0)  # turn off referrals
@@ -42,8 +45,11 @@ class HUDirectorySearcher:
     def __init__(self):
         
         self.AD_SEARCH_DN = "ou=people, o=Harvard University Core, dc=huid, dc=harvard, dc=edu";
-        
-        if settings.DEBUG:
+
+
+        if settings.__dict__.get('LDAP_SERVER', False):
+            self.ldap_url = settings.LDAP_SERVER  
+        elif settings.DEBUG:
             self.ldap_url = 'ldaps://hu-ldap-test.harvard.edu'
         else:
             self.ldap_url = 'ldaps://hu-ldap.harvard.edu'
