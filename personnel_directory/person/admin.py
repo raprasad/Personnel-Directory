@@ -103,7 +103,7 @@ class PersonAdmin(admin.ModelAdmin):
           ('Lab', {'fields': ['primary_lab', 'secondary_labs']}),
           ('Graduate Information', {'fields': ['grad_program', 'grad_year',]}),
           ('Extra', {'fields': ['alt_search_term',]}),
-          #('Images', {'fields': ['profile_image', 'thumb_image', 'profile_view', 'thumb_view']}),
+          ('Images', {'fields': ['profile_image', 'thumb_image', 'profile_view', 'thumb_view']}),
           ('Internal Info', {'fields': ['date_added', 'date_modified', 'id_hash']}),
 
       ]
