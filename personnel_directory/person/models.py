@@ -255,7 +255,11 @@ class Person(models.Model):
         
             
     def get_absolute_url(self):
-        return 'http://www.mcb.harvard.edu/Directory/?pid=%s' % self.id
+        try:
+            return reverse('view_single_person', kwargs={ 'id_hash': self.id_hash})
+        except:
+            return 'not found'
+        ##return 'http://www.mcb.harvard.edu/Directory/?pid=%s' % self.id
         
     class Meta:
         ordering = ('lname', 'fname',)  
