@@ -39,27 +39,28 @@ def make_person_roster(sheet1, info_line, people, **kwargs):
     #   (header label, attribute, width)
     column_attributes = [ ('Last Name', 'lname', 20)
     ,('First Name', 'fname', 20)
-    ,(' Middle Initial', 'minitial', 20)
-    ,(' Email', 'email', 30)
-    ,(' 2nd Email', 'second_email', 30)
-    ,(' Phone', 'phone', 15)
-    ,(' 2nd Phone', 'second_phone', 15)
-    ,(' Room', 'room', 15)
-    ,(' Address', 'address', 20)
-    ,(' City', 'city', 20)
-    ,(' State', 'state', 20)
-    ,(' Zip', 'zip', 20)
-    ,(' Appointment', 'appointment', 20)
-    ,(' Affiliation', 'affiliation', 20)
-    ,(' Title', 'title', 20)
-    ,(' Secondary Titles', 'secondary_titles', 20)
-    ,(' Grad Program', 'grad_program', 20)
-    ,(' Grad Year', 'grad_year', 20)
-    ,(' Office', 'office', 20)
-    ,(' Secondary Offices', 'secondary_offices', 20)
-    ,(' Primary Lab', 'primary_lab', 20)
-    ,(' Primary Lab Affiliation', 'primary_lab_affiliation', 15)
-    ,(' Secondary Labs', 'secondary_labs', 20)
+    ,('Middle Initial', 'minitial', 20)
+    ,('Email', 'email', 30)
+    ,('HU directory Email', 'hu_email', 30)
+    ,('2nd Email', 'second_email', 30)
+    ,('Phone', 'phone', 15)
+    ,('2nd Phone', 'second_phone', 15)
+    ,('Room', 'room', 15)
+    ,('Address', 'address', 20)
+    ,('City', 'city', 20)
+    ,('State', 'state', 20)
+    ,('Zip', 'zip', 20)
+    ,('Appointment', 'appointment', 20)
+    ,('Affiliation', 'affiliation', 20)
+    ,('Title', 'title', 20)
+    ,('Secondary Titles', 'secondary_titles', 20)
+    ,('Grad Program', 'grad_program', 20)
+    ,('Grad Year', 'grad_year', 20)
+    ,('Office', 'office', 20)
+    ,('Secondary Offices', 'secondary_offices', 20)
+    ,('Primary Lab', 'primary_lab', 20)
+    ,('Primary Lab Affiliation', 'primary_lab_affiliation', 15)
+    ,('Secondary Labs', 'secondary_labs', 20)
     ]
     
     #----------------------------
@@ -91,6 +92,13 @@ def make_person_roster(sheet1, info_line, people, **kwargs):
             
             if attr in ['city', 'state', 'zip']:
                 continue
+            elif attr== 'hu_email':
+                try:
+                    hu_email = p.harvardpersoninfo_set.all()[0].email
+                except:
+                    hu_email = 'n/a'
+                sheet1.write(excel_row_num, col_idx, hu_email, style_info_cell_wrap_on) 
+                 
             elif attr == 'address':
                 if p.building:
                     addr_str = p.building.addr1
