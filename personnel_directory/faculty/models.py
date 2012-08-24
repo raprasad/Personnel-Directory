@@ -66,6 +66,8 @@ class FacultyMember(Person):
     
     tags = models.ManyToManyField(Tag, null=True, blank=True)
 
+    course_tracker_id = models.IntegerField(default=-1) # Link to the Course tracker database
+
     def get_absolute_url(self):
         return reverse('view_faculty_profile', kwargs={ 'slug' : self.slug }) 
             
