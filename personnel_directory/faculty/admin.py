@@ -34,7 +34,7 @@ class FacultyMemberAdmin(admin.ModelAdmin):
     inlines = [SecondaryTitleInline, FacultyLink_Inline, GalleryImage_Inline]    # FacultyPublicationInline]
     save_on_top = True
     readonly_fields = ['privacy_info_link', 'profile_img_small', 'profile_img_medium', 'date_added', 'date_modified', 'id_hash']
-    list_display = ('lname', 'fname', 'minitial', 'course_tracker_id', 'profile_img_small', 'profile_img_medium', 'email', 'phone','category', 'affiliation', 'appointment','title', 'visible')
+    list_display = ('lname', 'fname', 'minitial', 'course_api_id', 'profile_img_small', 'profile_img_medium', 'email', 'phone','category', 'affiliation', 'appointment','title', 'visible')
     search_fields = ('lname','fname',  'email', 'second_email' )
     list_filter = ( 'visible','visible_profile', 'category', 'research_areas','affiliation', )
     filter_horizontal = ( 'secondary_labs', 'research_areas', 'secondary_offices', 'tags',)
@@ -61,7 +61,7 @@ class FacultyMemberAdmin(admin.ModelAdmin):
           ('Offices', {'fields': ['office', 'secondary_offices']}),
           #('Graduate Information', {'fields': ['grad_program', 'grad_year',]}),
           
-          ('Course database link', {'fields': ['course_tracker_id',]}),
+          ('Course database link', {'fields': ['course_api_id', ]}),
           ('Extra', {'fields': ['alt_search_term',]}),
           ('Tags', {'fields': ['tags',]}),
           ('Internal Info', {'fields': ['date_added', 'date_modified', 'id_hash']}),

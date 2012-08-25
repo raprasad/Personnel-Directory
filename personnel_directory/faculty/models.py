@@ -66,7 +66,7 @@ class FacultyMember(Person):
     
     tags = models.ManyToManyField(Tag, null=True, blank=True)
 
-    course_tracker_id = models.IntegerField(default=-1) # Link to the Course tracker database
+    course_api_id = models.CharField(max_length=100, blank=True, help_text='instructor id in Course API https://manual.cs50.net/HarvardCourses_API')
 
     def get_absolute_url(self):
         return reverse('view_faculty_profile', kwargs={ 'slug' : self.slug }) 
