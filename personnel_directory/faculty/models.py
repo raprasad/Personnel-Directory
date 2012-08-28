@@ -70,6 +70,11 @@ class FacultyMember(Person):
 
     course_api_id = models.CharField(max_length=100, blank=True, help_text='instructor id in Course API https://manual.cs50.net/HarvardCourses_API')
 
+    def is_affiliate_faculty(self):
+        if self.category and self.category.id == AFFILIATE_FACULTY_CATEGORY_ID:
+            return True
+        return False
+
     def get_absolute_url(self):
         return reverse('view_faculty_profile', kwargs={ 'slug' : self.slug }) 
             
