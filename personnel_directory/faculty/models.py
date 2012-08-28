@@ -7,6 +7,8 @@ from person.models import Person
 from tags.models import Tag
 from django.core.urlresolvers import reverse
 
+MCB_FACULTY_CATEGORY_ID = 1
+AFFILIATE_FACULTY_CATEGORY_ID = 2
 EMIRITI_FACULTY_CATEGORY_ID = 4
 
 class FacultyCategory(models.Model):
