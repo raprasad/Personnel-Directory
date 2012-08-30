@@ -66,7 +66,8 @@ class FacultyMember(Person):
     profile_sm_image = models.ImageField(upload_to='faculty/profile', help_text='Small Profile Image (62 x 62)',  blank=True, null=True)
     profile_med_image = models.ImageField(upload_to='faculty/profile', help_text='Medium Profile Image (130 x 154)',blank=True, null=True)   
     
-    tags = models.ManyToManyField(Tag, null=True, blank=True)
+    faculty_member_tag = models.ForeignKey(Tag, null=True, blank=True, related_name='faculty_tag')
+    tags = models.ManyToManyField(Tag, null=True, blank=True)#, related_name='tags')
 
     course_api_id = models.CharField(max_length=100, blank=True, help_text='instructor id in Course API https://manual.cs50.net/HarvardCourses_API')
 

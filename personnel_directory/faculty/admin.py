@@ -63,7 +63,7 @@ class FacultyMemberAdmin(admin.ModelAdmin):
           
           ('Course database link', {'fields': ['course_api_id', ]}),
           ('Extra', {'fields': ['alt_search_term',]}),
-          ('Tags', {'fields': ['tags',]}),
+          ('Tags', {'fields': ['faculty_member_tag', 'tags',]}),
           ('Internal Info', {'fields': ['date_added', 'date_modified', 'id_hash']}),
 
       ]
