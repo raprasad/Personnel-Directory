@@ -54,6 +54,9 @@ def get_grad_year_choices():
     
     GRAD_YEAR_CHOICES = map(lambda x: (x.id, x.name), GraduateYear.objects.filter(id__in=grad_year_dict.keys()))
     return GRAD_YEAR_CHOICES
+    
+    
+    
     if json_format:
         let_menu = map(lambda x: '"%s"' % x, letter_menu)
         return '''"letters_for_menu" : [%s]''' % (','.join(let_menu))
@@ -62,11 +65,13 @@ def get_grad_year_choices():
 
 #GRAD_YEAR_CHOICES = map(lambda x: (x.id, x.name), GraduateYear.objects.all())
 class GraduateYearForm(forms.Form):
-  all_graduate_years = forms.BooleanField(required=False)
+    all_graduate_years = forms.BooleanField(required=False)
+    MCB_only_grad_students = forms.BooleanField(label='MCB only', required=False, widget=forms.CheckboxInput(attrs={'class':'cbox',}))
 
-  graduate_year = forms.ChoiceField(label='Graduate Year', help_text='(years displayed have active students)', choices=get_grad_year_choices()
+    graduate_year = forms.ChoiceField(label='Graduate Year', help_text='(years displayed have active students)', choices=get_grad_year_choices()
         , widget=forms.CheckboxSelectMultiple(attrs={'class':'graduate_year_choice cbox',})
     )
+    include_visiting_fellows = forms.BooleanField(label='Include Visiting Fellows', required=False, widget=forms.CheckboxInput(attrs={'class':'cbox',}))
 
 SELECTED_TITLE_CHOICES = map(lambda x: (x.id, x.title), PersonTitle.objects.filter(id__in=[198, 173, 212]))
 class TitleForm(forms.Form):
