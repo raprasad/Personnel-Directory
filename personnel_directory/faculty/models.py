@@ -86,6 +86,12 @@ class FacultyMember(Person):
         return '<img src="%s" alt="profile img" />' % (self.profile_med_image.url)
     profile_img_medium.allow_tags = True
 
+    def get_lab_website(self):
+        for lnk in self.facultylink_set.all().order_by('sort_order'):
+            if lnk.name.find(self.lname) > -1 and lnk.name.find('Members') == -1  and lnk.name.find('Publication') == -1:
+                return lnk.url
+        return None
+
     def profile_img_small(self):
         if not self.profile_sm_image:
             return '(no image)'
@@ -124,7 +130,7 @@ class FacultyLink(models.Model):
         return self.name
         
     class Meta:
-        ordering = ('faculty_member', 'name', )
+        ordering = ('faculty_member', 'sort_order', 'name', )
 
 
 class GalleryImage(models.Model):
