@@ -92,6 +92,18 @@ class FacultyMember(Person):
         return '<img src="%s" alt="profile img" />' % (self.profile_med_image.url)
     profile_img_medium.allow_tags = True
 
+    def get_pubmed_link(self):
+        if self.pubmed_search_term:
+            return 'http://www.ncbi.nlm.nih.gov/pubmed?term=%s' % self.pubmed_search_term
+        return None
+
+    def get_link_to_members_in_directory(self):
+        if self.faculty_lab:
+            return '%s?id_mcb_pdir=1&lab=%s' % (reverse('view_mcb_directory', kwargs={}), self.faculty_lab.id)
+        return None
+        #/mcb/directory/search/?id_mcb_pdir=1&lab=45
+        #view_mcb_directory
+        
     def get_lab_website(self):
         for lnk in self.facultylink_set.all().order_by('sort_order'):
             if lnk.name.find(self.lname) > -1 and lnk.name.find('Members') == -1  and lnk.name.find('Publication') == -1:
