@@ -57,7 +57,7 @@ class FacultyMember(Person):
     category = models.ForeignKey(FacultyCategory, null=True)
     
     # helps connect to the personnel directory
-    faculty_lab = models.ForeignKey(Lab, null=True, blank=True)
+    faculty_lab = models.ForeignKey(Lab, null=True, blank=True, on_delete=models.PROTECT)
     
     # pubmed search term: helps make a link to pubmed
     pubmed_search_term =  models.CharField(max_length=255, blank=True, help_text='e.g. "murthy vn"; helps make a link to pubmed')
