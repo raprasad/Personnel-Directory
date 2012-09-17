@@ -34,7 +34,7 @@ class FacultyMemberAdmin(admin.ModelAdmin):
     inlines = [SecondaryTitleInline, FacultyLink_Inline, GalleryImage_Inline]    # FacultyPublicationInline]
     save_on_top = True
     readonly_fields = ['privacy_info_link', 'profile_img_small', 'profile_img_medium', 'date_added', 'date_modified', 'id_hash']
-    list_display = ('lname', 'fname', 'minitial', 'course_api_id', 'profile_img_small', 'profile_img_medium', 'email', 'phone','category', 'affiliation', 'appointment','title', 'visible')
+    list_display = ('lname', 'fname', 'minitial', 'course_api_id', 'faculty_lab', 'profile_img_small', 'profile_img_medium', 'email', 'phone','category', 'affiliation', 'appointment','title', 'visible')
     search_fields = ('lname','fname',  'email', 'second_email' )
     list_filter = ( 'visible','visible_profile', 'category', 'research_areas','affiliation', )
     filter_horizontal = ( 'secondary_labs', 'research_areas', 'secondary_offices', 'tags',)
@@ -49,6 +49,7 @@ class FacultyMemberAdmin(admin.ModelAdmin):
                 , ('profile_med_image', 'profile_img_medium',), ]}),
           ('Email', {'fields': ['email', 'second_email',]}),
           ('Phone', {'fields': ['phone', 'second_phone', ]}),
+          ('Lab/Pubmed', {'fields': ['faculty_lab', 'pubmed_search_term', ]}),
           ('User Names', {'fields': ['ad_username', 'fas_username',]}),
           ('Visible on Web', {'fields': ['visible', 'visible_profile', ]}),
           ('Physical Address', {'fields': ['room', 'building']}),

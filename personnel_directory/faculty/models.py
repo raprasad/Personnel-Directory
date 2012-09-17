@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.localflavor.us.models import USStateField, PhoneNumberField
 from django.db import models
 from django.template.defaultfilters import slugify
-from person.models import Person
+from person.models import Person, Lab
 from tags.models import Tag
 from django.core.urlresolvers import reverse
 
@@ -55,6 +55,12 @@ class FacultyMember(Person):
     visible_profile = models.BooleanField(default=True)
     
     category = models.ForeignKey(FacultyCategory, null=True)
+    
+    # helps connect to the personnel directory
+    faculty_lab = models.ForeignKey(Lab, null=True, blank=True)
+    
+    # pubmed search term: helps make a link to pubmed
+    pubmed_search_term =  models.CharField(max_length=255, blank=True, help_text='e.g. "murthy vn"; helps make a link to pubmed')
     
     research_areas = models.ManyToManyField(ResearchArea, null=True, blank=True)
     research_summary = models.TextField(blank=True)
