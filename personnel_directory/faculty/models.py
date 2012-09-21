@@ -59,6 +59,8 @@ class FacultyMember(Person):
     # helps connect to the personnel directory
     faculty_lab = models.ForeignKey(Lab, null=True, blank=True, on_delete=models.PROTECT)
     
+    assistant = models.ForeignKey(Person, blank=True, null=True, help_text='Used to generate phone list.', related_name='faculty assistant')
+    
     # pubmed search term: helps make a link to pubmed
     pubmed_search_term =  models.CharField(max_length=255, blank=True, help_text='e.g. "murthy vn"; helps make a link to pubmed')
     
@@ -77,6 +79,21 @@ class FacultyMember(Person):
 
     course_api_id = models.CharField(max_length=100, blank=True, help_text='instructor id in Course API https://manual.cs50.net/HarvardCourses_API')
 
+
+    def title_list(self):
+        l = []
+        if self.title:
+            l.append('%s' % self.title)
+
+        for t in self.secondarytitle_set.all():
+            l.append('%s' % t)
+
+        if l == []:
+            return '(not set)'
+
+        return '<br /><br />'.join(l)
+    title_list.allow_tags = True
+        
     def is_affiliate_faculty(self):
         if self.category and self.category.id == AFFILIATE_FACULTY_CATEGORY_ID:
             return True

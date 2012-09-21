@@ -33,8 +33,9 @@ class SecondaryTitleInline(admin.TabularInline):
 class FacultyMemberAdmin(admin.ModelAdmin):
     inlines = [SecondaryTitleInline, FacultyLink_Inline, GalleryImage_Inline]    # FacultyPublicationInline]
     save_on_top = True
-    readonly_fields = ['privacy_info_link', 'profile_img_small', 'profile_img_medium', 'date_added', 'date_modified', 'id_hash']
-    list_display = ('lname', 'fname', 'minitial', 'course_api_id', 'faculty_lab', 'profile_img_small', 'profile_img_medium', 'email', 'phone','category', 'affiliation', 'appointment','title', 'visible')
+    readonly_fields = ['privacy_info_link', 'profile_img_small', 'profile_img_medium', 'date_added', 'date_modified', 'id_hash', 'title_list']
+    list_display = ('lname', 'fname','profile_img_small', 'email', 'title_list',   'assistant', 'faculty_lab',  'phone','category', 'affiliation', 'appointment','visible', 'profile_img_medium','course_api_id')
+    list_editable = ('assistant', )
     search_fields = ('lname','fname',  'email', 'second_email' )
     list_filter = ( 'visible','visible_profile', 'category', 'research_areas','affiliation', )
     filter_horizontal = ( 'secondary_labs', 'research_areas', 'secondary_offices', 'tags',)
@@ -45,6 +46,7 @@ class FacultyMemberAdmin(admin.ModelAdmin):
     #positions = ('labs',)
     fieldsets = [
           ('Name',               {'fields': ['fname', 'minitial', 'lname', 'privacy_info_link'  ]}),
+          ('Assistant', {'fields': ['assistant',  ]}),
           ('Profile Images', {'fields': [('profile_sm_image', 'profile_img_small',)\
                 , ('profile_med_image', 'profile_img_medium',), ]}),
           ('Email', {'fields': ['email', 'second_email',]}),
