@@ -35,7 +35,7 @@ class FacultyMemberAdmin(admin.ModelAdmin):
     save_on_top = True
     readonly_fields = ['privacy_info_link', 'profile_img_small', 'profile_img_medium', 'date_added', 'date_modified', 'id_hash', 'title_list']
     list_display = ('lname', 'fname','profile_img_small', 'email', 'title_list',   'assistant', 'faculty_lab',  'phone','category', 'affiliation', 'appointment','visible', 'profile_img_medium','course_api_id')
-    list_editable = ('assistant', )
+    #list_editable = ('assistant', )
     search_fields = ('lname','fname',  'email', 'second_email' )
     list_filter = ( 'visible','visible_profile', 'category', 'research_areas','affiliation', )
     filter_horizontal = ( 'secondary_labs', 'research_areas', 'secondary_offices', 'tags',)
