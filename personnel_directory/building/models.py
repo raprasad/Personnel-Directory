@@ -51,8 +51,8 @@ class Building(models.Model):
 
     def address_col_xls(self):
         if self.addr2:
-            return '%s\n%s\n%s\n%s\n%s' % (self.addr1, self.addr2, self.city, self.zipcode, self.state)
+            return '%s\n%s\n%s, %s %s' % (self.addr1, self.addr2, self.city, self.state, self.zipcode)
         else:
-            return '%s\n%s\n%s\n%s' % ( self.addr1, self.city, self.zipcode, self.state)
+            return '%s\n%s, %s %s' % ( self.addr1, self.city, self.state, self.zipcode)
     
    
