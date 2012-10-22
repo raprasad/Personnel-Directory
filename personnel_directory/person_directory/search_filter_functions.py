@@ -277,7 +277,8 @@ def add_secondary_titles(people_lst, qclause_filters):
         for p in people_lst:
             if pid == p.id: # if they match, add the second lab directly
                 p.second_titles = []
-                for other_title in p.secondary_titles.all():
+                #for other_title in p.secondary_titles.all():
+                for other_title in p.secondarytitle_set.all():
                     p.second_titles.append(other_title.title)
 
 
