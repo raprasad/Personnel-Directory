@@ -27,7 +27,7 @@ class FacultyLinkAdmin(admin.ModelAdmin):
     save_on_top = True
     search_fields = ('name', )
     list_filter = ('link_type',)
-    list_display= ('faculty_member', 'name', 'url','link_type ')   
+    list_display= ('faculty_member', 'name', 'url','link_type')   
 admin.site.register(FacultyLink, FacultyLinkAdmin)
 
 
