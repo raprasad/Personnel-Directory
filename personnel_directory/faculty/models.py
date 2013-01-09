@@ -153,9 +153,19 @@ class FacultyMember(Person):
 
     #    super(FacultyMember, self).save()        # Call the "real" save() method.
             
-
+class FacultyLinkType(models.Model):
+    name = models.CharField(max_length=255)
+    
+    def __unicode__(self):
+        return self.name
+        
+    class Meta:
+        ordering = ('name', )
+    
+    
 class FacultyLink(models.Model):
     faculty_member = models.ForeignKey(FacultyMember) 
+    link_type = models.ForeignKey(FacultyLinkType)
     
     name = models.CharField(max_length=255)
     url = models.URLField(blank=True)

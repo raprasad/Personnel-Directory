@@ -18,11 +18,16 @@ class ResearchAreaAdmin(admin.ModelAdmin):
     search_fields = ('name', )
 admin.site.register(ResearchArea, ResearchAreaAdmin)
 
+class FacultyLinkTypeAdmin(admin.ModelAdmin):
+    save_on_top = True
+    search_fields = ('name', )
+admin.site.register(FacultyLinkType, FacultyLinkTypeAdmin)
+
 class FacultyLinkAdmin(admin.ModelAdmin):
     save_on_top = True
     search_fields = ('name', )
-    
-    list_display= ('faculty_member', 'name', 'url',)   
+    list_filter = ('link_type',)
+    list_display= ('faculty_member', 'name', 'url','link_type ')   
 admin.site.register(FacultyLink, FacultyLinkAdmin)
 
 
