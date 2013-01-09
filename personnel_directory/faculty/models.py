@@ -11,6 +11,8 @@ MCB_FACULTY_CATEGORY_ID = 1
 AFFILIATE_FACULTY_CATEGORY_ID = 2
 EMIRITI_FACULTY_CATEGORY_ID = 4
 
+FACULTY_LINK_TYPE_LAB_WEBSITE = 2
+
 class FacultyCategory(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, blank=True)
@@ -122,10 +124,16 @@ class FacultyMember(Person):
         #view_mcb_directory
         
     def get_lab_website(self):
-        for lnk in self.facultylink_set.all().order_by('sort_order'):
-            if lnk.name.find(self.lname) > -1 and lnk.name.find('Members') == -1  and lnk.name.find('Publication') == -1:
-                return lnk.url
+        #return 'hullo'
+        lnks = self.facultylink_set.filter(link_type__id=FACULTY_LINK_TYPE_LAB_WEBSITE)
+        if lnks.count() > 0:
+            return lnks[0].url
         return None
+        
+        #for lnk in self.facultylink_set.all().order_by('sort_order'):
+        #    if lnk.name.find(self.lname) > -1 and lnk.name.find('Members') == -1  and lnk.name.find('Publication') == -1:
+        #        return lnk.url
+        #return None
 
     def profile_img_small(self):
         if not self.profile_sm_image:
