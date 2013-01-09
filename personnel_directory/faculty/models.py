@@ -130,10 +130,6 @@ class FacultyMember(Person):
             return lnks[0].url
         return None
         
-        #for lnk in self.facultylink_set.all().order_by('sort_order'):
-        #    if lnk.name.find(self.lname) > -1 and lnk.name.find('Members') == -1  and lnk.name.find('Publication') == -1:
-        #        return lnk.url
-        #return None
 
     def profile_img_small(self):
         if not self.profile_sm_image:
