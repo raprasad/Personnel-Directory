@@ -18,7 +18,8 @@ affiliation: {{ p.affiliation }}
 {% if p.title %}title: {{ p.title }}{% endif %}
 {% for st in p.get_secondary_titles %}{% if forloop.first %}secondary title(s):{% endif %}
 {{ st.title }}
-{% endfor %}{{ p.long_title }}{% endif %}
+{% endfor %}
+{% if p.long_title %}long_title: {{ p.long_title }}{% endif %}
 
 -- GRAD PROGRAM --
 {% if p.grad_program or p.grad_year %}{% if p.grad_program %}grad program: {{ p.grad_program }}{% endif %}
