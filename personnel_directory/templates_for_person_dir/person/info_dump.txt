@@ -12,9 +12,9 @@ appointment: {{ p.appointment }}
 affiliation: {{ p.affiliation }}
 ------------
 {% if p.title %}title: {{ p.title }}{% endif %}
-{% if p.secondary_titles %}{% for st in p.get_secondary_titles %}{% if forloop.first %}secondary title(s):{% endif %}
+{% for st in p.get_secondary_titles %}{% if forloop.first %}secondary title(s):{% endif %}
 {{ st.title }}
-{% endfor %}{% endif %}
+{% endfor %}
 {% if p.long_title %}long_title: {{ p.long_title }}{% endif %}
 {% if p.grad_program or p.grad_year %}{% if p.grad_program %}grad program: {{ p.grad_program }}{% endif %}
 {% if p.grad_year %}grad year: {{ p.grad_year }}{% endif %}{% endif %}
