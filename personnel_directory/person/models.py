@@ -191,7 +191,7 @@ class Person(models.Model):
     appointment = models.ForeignKey( AppointmentType, null=True, blank=True, on_delete=models.PROTECT)
     affiliation = models.ForeignKey(PersonAffiliation, help_text='home institution, usually MCB', on_delete=models.PROTECT)
     title = models.ForeignKey(PersonTitle, null=True, blank=True, on_delete=models.PROTECT)
-    secondary_titles = models.ManyToManyField(PersonTitle, null=True, blank=True, related_name='secondary titles')
+    #secondary_titles = models.ManyToManyField(PersonTitle, null=True, blank=True, related_name='secondary titles')
 
     long_title = models.TextField(blank=True, help_text='optional')
 
