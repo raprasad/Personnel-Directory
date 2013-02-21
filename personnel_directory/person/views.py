@@ -93,14 +93,17 @@ def view_email_search_results(request):
         title_ids = fmt_get_vals(request.GET.get('title_ids', -1)) 
         graduate_year_ids  = fmt_get_vals(request.GET.get('graduate_year_ids', -1)) 
         
+        people_with_matching_secondary_titles = SecondaryTitle.objects.filter(title__id__in=title_ids).values_list('person__id', flat=True)
+        
         lst = Person.objects.filter(visible=True).filter(Q(primary_lab__id__in=lab_ids) | \
              Q(building__id__in=building_ids) | \
              Q(secondary_labs__id__in=lab_ids) | \
              Q(office__id__in=office_ids) | \
              Q(appointment__id__in=appt_ids) | \
              Q(title__id__in=title_ids) | \
+             Q(id__in=people_with_matching_secondary_titles) |\
              Q(grad_year__id__in=graduate_year_ids) | \
-             Q(secondary_titles__id__in=title_ids) | \
+             #Q(secondary_titles__id__in=title_ids) | \
              Q(appointment__personnel_category__id__in=pcat_ids) ).values_list('email','lname','fname').distinct().order_by('lname' ,'fname')
         #secondary_labs
         lst = filter(lambda x: x[0] is not None and not x[0]=='', lst)

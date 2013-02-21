@@ -1,4 +1,4 @@
-{{ obj.title }}{% for st in obj.secondary_titles.all %}a<br />{{ st }}{% endfor %}
+{{ obj.title }}{% for st in obj.get_secondary_titles %}a<br />{{ st.title }}{% endfor %}
     <br />email: {{ obj.email }}
     <br />phone: {{ obj.phone }}
     <br />address: {{ obj.room }}

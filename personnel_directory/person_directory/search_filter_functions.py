@@ -89,7 +89,7 @@ def prepare_form_dropdown_criteria_names_and_filter(request):
                 , 'office__id__in' : office_ids \
                 , 'appointment__id__in' : appt_ids \
                 , 'title__id__in' : title_ids \
-                , 'secondary_titles__id__in' : title_ids \
+                #, 'secondary_titles__id__in' : title_ids \
                 , 'grad_year__id__in' : graduate_year_ids \
                 , 'id__in' : pids \
                 }
@@ -228,7 +228,7 @@ def retrieve_directory_search_results(request, is_departmental_intranet=False):
     lu.update(form_info_dict)
 
     # retreive people based on form criteria
-    people = Person.objects.select_related('office', 'primary_lab', 'title', 'appointment', 'affiliation', 'secondary_titles', 'secondary_labs', 'grad_year').filter(visible=True)
+    people = Person.objects.select_related('office', 'primary_lab', 'title', 'appointment', 'affiliation', 'secondary_labs', 'grad_year').filter(visible=True)
     for qclause_filter in qclause_filters:
         people = people.filter(qclause_filter)
     
@@ -273,6 +273,22 @@ def add_secondary_titles(people_lst, qclause_filters):
     """To reduce ManyToMany-related queries in template, preload secondary title information"""
 
     # pull ids of people with second titles
+    ids_of_people_with_second_titles = SecondaryTitle.objects.filter(person__visible=True).values_list('person__id', flat=True)
+
+    if len(ids_of_people_with_second_titles) == 0:
+        return
+
+    # find them in the selected person list
+    for p in people_lst:
+        if p.id in ids_of_people_with_second_titles:        # if they match, add the second title(s) directly
+            p.second_titles = []
+            for other_title in p.get_secondary_titles():
+                p.second_titles.append(other_title.title)
+    #------------------------------------------------
+    #   code using obsolete "secondary_titles"
+    #------------------------------------------------
+    # pull ids of people with second titles
+    """
     second_title_ids = Person.objects.exclude(secondary_titles=None).filter(visible=True)
     
     for qclause_filter in qclause_filters:
@@ -293,7 +309,7 @@ def add_secondary_titles(people_lst, qclause_filters):
                 #for other_title in p.secondary_titles.all():
                 for other_title in p.secondarytitle_set.all():
                     p.second_titles.append(other_title.title)
-
+    """
 
 def add_secondary_labs(people_lst, qclause_filters):
     """To reduce ManyToMany-related queries in template, preload secondary lab information"""

@@ -16,8 +16,8 @@ building: {{ p.building }}
 appointment: {{ p.appointment }}
 affiliation: {{ p.affiliation }}
 {% if p.title %}title: {{ p.title }}{% endif %}
-{% if p.secondary_titles %}{% for st in p.secondary_titles.all %}{% if forloop.first %}secondary title(s):{% endif %}
-{{ st }}
+{% for st in p.get_secondary_titles %}{% if forloop.first %}secondary title(s):{% endif %}
+{{ st.title }}
 {% endfor %}{% endif %}
 {% if p.long_title %}long_title: {{ p.long_title }}{% endif %}
 

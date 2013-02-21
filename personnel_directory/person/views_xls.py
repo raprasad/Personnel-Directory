@@ -8,33 +8,25 @@ import xlwt
 
 from personnel_directory.common.time_util import get_datetime_now
 
-from personnel_directory.person.models import Lab, Person, PersonTitle
+from personnel_directory.person.models import Lab, Person, PersonTitle, SecondaryTitle
 from personnel_directory.person.person_xls_maker import make_person_roster
 
 
-def add_secondary_titles(people_lst, qclause_filters):
+def add_secondary_titles(people_lst):#, qclause_filters):
     """To reduce ManyToMany-related queries in template, preload secondary title information"""
 
     # pull ids of people with second titles
-    second_title_ids = Person.objects.exclude(secondary_titles=None).filter(visible=True)
+    ids_of_people_with_second_titles = SecondaryTitle.objects.filter(person__visible=True).values_list('person__id', flat=True)
 
-    for qclause_filter in qclause_filters:
-        second_title_ids = second_title_ids.filter(qclause_filter)
-
-    second_title_ids = second_title_ids.values_list('id', flat=True)
-
-
-    if len(second_title_ids) == 0:
+    if len(ids_of_people_with_second_titles) == 0:
         return
 
-    # go through each id of person with 2nd title 
-    for pid in second_title_ids:
-        # find them in the selected person list
-        for p in people_lst:
-            if pid == p.id: # if they match, add the second lab directly
-                p.second_titles = []
-                for other_title in p.secondary_titles.all():
-                    p.second_titles.append(other_title.title)
+    # find them in the selected person list
+    for p in people_lst:
+        if p.id in ids_of_people_with_second_titles:        # if they match, add the second title(s) directly
+            p.second_titles = []
+            for other_title in p.get_secondary_titles():
+                p.second_titles.append(other_title.title)
 
 
 def add_secondary_labs(people_lst, qclause_filters):
@@ -76,11 +68,11 @@ def view_directory_excel_file(request):
                 kwargs.update({str(x):str(y)})
         #print kwargs
         try:
-            people = Person.objects.select_related('office', 'building', 'primary_lab', 'title', 'appointment', 'affiliation', 'secondary_titles', 'secondary_labs', 'grad_program', 'grad_year').filter(**kwargs).order_by('lname','fname')
+            people = Person.objects.select_related('office', 'building', 'primary_lab', 'title', 'appointment', 'affiliation',  'secondary_labs', 'grad_program', 'grad_year').filter(**kwargs).order_by('lname','fname')
         except:
-            people = Person.objects.select_related('office', 'building', 'primary_lab', 'title', 'appointment', 'affiliation', 'secondary_titles', 'secondary_labs', 'grad_program', 'grad_year').all().order_by('lname','fname')    
+            people = Person.objects.select_related('office', 'building', 'primary_lab', 'title', 'appointment', 'affiliation',  'secondary_labs', 'grad_program', 'grad_year').all().order_by('lname','fname')    
     else:
-        people = Person.objects.select_related('office', 'building', 'primary_lab', 'title', 'appointment', 'affiliation', 'secondary_titles', 'secondary_labs', 'grad_program', 'grad_year').filter(visible=True).order_by('lname', 'fname')
+        people = Person.objects.select_related('office', 'building', 'primary_lab', 'title', 'appointment', 'affiliation', 'secondary_labs', 'grad_program', 'grad_year').filter(visible=True).order_by('lname', 'fname')
    
     if people.count() == 0:
         return HttpResponse('Sorry!  No people were found for this list.<br /><br />Please press the back button on your browser.')
