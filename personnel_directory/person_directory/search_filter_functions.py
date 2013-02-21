@@ -6,7 +6,7 @@ from common.ajax_util import *
 from hu_ldap.models import HarvardPersonInfo, HarvardTitle
 from person.models import *
 from person_directory.forms import *
-from faculty.models import FacultyMember
+from faculty.models import FacultyMember, EMIRITI_FACULTY_CATEGORY_ID
 from django.core.validators import email_re
 
 import re
@@ -260,7 +260,7 @@ def add_faculty_profile_flag(people_lst):
     """To reduce ManyToMany-related queries in template, preload secondary title information"""
 
     # pull ids of faculty with profiles with second titles
-    faculty_ids = FacultyMember.objects.filter(visible=True, visible_profile=True).values_list('id', flat=True)
+    faculty_ids = FacultyMember.objects.filter(visible=True, visible_profile=True).exclude(category__id=EMIRITI_FACULTY_CATEGORY_ID).values_list('id', flat=True)
     
     for p in people_lst:
         if p.id in faculty_ids:
