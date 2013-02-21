@@ -6,7 +6,7 @@ from common.ajax_util import *
 from hu_ldap.models import HarvardPersonInfo, HarvardTitle
 from person.models import *
 from person_directory.forms import *
-
+from faculty.models import FacultyMember
 from django.core.validators import email_re
 
 import re
@@ -238,6 +238,7 @@ def retrieve_directory_search_results(request, is_departmental_intranet=False):
 
     add_secondary_labs(people_lst, qclause_filters)
     add_secondary_titles(people_lst, qclause_filters)
+    add_faculty_profile_flag(people_lst)
 
     last_get = request.GET.copy()
     if last_get.has_key('jsoncallback'): last_get.pop('jsoncallback')
@@ -255,6 +256,18 @@ def retrieve_directory_search_results(request, is_departmental_intranet=False):
     return lu
 
     
+def add_faculty_profile_flag(people_lst):
+    """To reduce ManyToMany-related queries in template, preload secondary title information"""
+
+    # pull ids of faculty with profiles with second titles
+    faculty_ids = FacultyMember.objects.filter(visible=True, visible_profile=True).values_list('id', flat=True)
+    
+    for p in people_lst:
+        if p.id in faculty_ids:
+            p.has_faculty_profile= True
+        else:
+            p.has_faculty_profile = False
+            
 
 def add_secondary_titles(people_lst, qclause_filters):
     """To reduce ManyToMany-related queries in template, preload secondary title information"""
