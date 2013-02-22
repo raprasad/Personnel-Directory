@@ -17,4 +17,7 @@ urlpatterns += patterns(
     'personnel_directory.person.views_xls',
     url(r'^person-xls/$', 'view_directory_excel_file', name='view_directory_excel_file' ),
 
+    url(r'^person-mcb-labs-xls/$', 'view_directory_excel_mcb_lab_personnel', name='view_directory_excel_mcb_lab_personnel' ),
+
+
 )

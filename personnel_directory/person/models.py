@@ -26,6 +26,8 @@ PERSON_PROFILE_THUMB_IMAGE_SIZE = 100
 THUMB_UPLOAD_TO = os.path.join('person', 'thumb')
 PROFILE_UPLOAD_TO = os.path.join('person', 'profile')
 
+ROTATION_LAB_NAME = 'Rotation Student'
+
 class PersonAffiliation(models.Model):
     """Default is MCB -- if no appointment clear, indicate home institution / department"""
     name = models.CharField(max_length=255, unique=True)

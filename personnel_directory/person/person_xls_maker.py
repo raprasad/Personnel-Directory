@@ -1,7 +1,8 @@
 import xlwt
 from xlwt import easyxf
 from personnel_directory.common.xls_styles import *
-from personnel_directory.person.models import Person, SecondaryTitle
+from personnel_directory.person.models import Person, SecondaryTitle, ROTATION_LAB_NAME
+
 
 def get_max_len_attr(attr_name, lst_people, char_multiplier=256):
     # iterate through each attribute, turn it into a string, and then a len() integer
@@ -117,10 +118,14 @@ def make_person_roster(sheet1, info_line, people, **kwargs):
             
             elif attr in foreign_key_attrs:
                 cell_val = ''
-                if attr == 'primary_lab' and p.primary_lab:     # exception b/c str() val is two fields
+                if attr == 'primary_lab' and p.primary_lab:     # exception b/c str() val is two fields                    
                     cell_val = p.primary_lab.name
+                    
                 elif attr == 'primary_lab_affiliation' and p.primary_lab and p.primary_lab.affiliation:
-                    cell_val = p.primary_lab.affiliation.name
+                    if p.primary_lab.name == ROTATION_LAB_NAME:
+                        cell_val = 'MCB'
+                    else:
+                        cell_val = p.primary_lab.affiliation.name
                 elif attr == 'primary_lab_affiliation':
                     cell_val = ''
                 else:    

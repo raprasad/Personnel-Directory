@@ -8,7 +8,7 @@ import xlwt
 
 from personnel_directory.common.time_util import get_datetime_now
 
-from personnel_directory.person.models import Lab, Person, PersonTitle, SecondaryTitle
+from personnel_directory.person.models import Lab, Person, PersonTitle, SecondaryTitle, MCB_AFFILIATION_ID, ROTATION_LAB_NAME
 from personnel_directory.person.person_xls_maker import make_person_roster
 
 
@@ -55,13 +55,27 @@ def add_secondary_labs(people_lst, qclause_filters):
 
 
 
+def view_directory_excel_mcb_lab_personnel(request):
+    return view_directory_excel_file(request, mcb_lab_personnel_only=True)
 
-def view_directory_excel_file(request):
+
+def view_directory_excel_file(request, mcb_lab_personnel_only=False):
     """From the Django admin view of a Person->Lab object, generate an Excel spreadsheet"""
     if not (request.user.is_authenticated() and request.user.is_staff):  
         return Http404('404 - Page Not Found')
     
-    if request.method == 'GET':  
+    sheet_title = slugify('MCB People')
+    
+    if mcb_lab_personnel_only:
+        sheet_title = slugify('MCB Lab Personnel')
+        people = Person.objects.select_related('office', 'building', 'primary_lab', 'title'\
+                , 'appointment', 'affiliation',  'secondary_labs', 'grad_program'\
+                , 'grad_year'\
+                ).filter( Q(primary_lab__affiliation__id__exact=MCB_AFFILIATION_ID) \
+                        |Q(primary_lab__name=ROTATION_LAB_NAME)\
+                ).order_by('primary_lab', 'lname', 'fname')
+        
+    elif request.method == 'GET':  
         kwargs = {}
         for x,y in request.GET.iteritems():
             if not str(x) in ['ot', 'o', 'q']:
@@ -79,7 +93,7 @@ def view_directory_excel_file(request):
     
     book = xlwt.Workbook(encoding="utf-8")
     # With a workbook object made we can now add some sheets.
-    sheet1 = book.add_sheet(slugify('MCB People'))
+    sheet1 = book.add_sheet(sheet_title)
 
     date_obj = get_datetime_now()
     info_line = "Generated on %s" % (date_obj.strftime('%m/%d/%Y - %I:%M %p'))
