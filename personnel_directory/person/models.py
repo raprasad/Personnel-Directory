@@ -279,7 +279,7 @@ class Person(models.Model):
             hu_info = self.harvardpersoninfo_set.get(person=self)
         except: # HarvardPersonInfo.DoesNotExist:
             change_url = reverse('admin:hu_ldap_harvardpersoninfo_add', args=())
-            return '<a href="%s">Add Privacy Info</a>' % change_url
+            return '<a href="%s?person=%s">Add Privacy Info</a>' % (change_url, self.id)
                   
         change_url = reverse('admin:hu_ldap_harvardpersoninfo_change', args=(hu_info.id,))
         return '<a href="%s">View Privacy Info</a>' % change_url
