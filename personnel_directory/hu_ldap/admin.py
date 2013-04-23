@@ -30,8 +30,8 @@ class HarvardPersonInfoAdmin(admin.ModelAdmin):
             
     search_fields = ('lname','fname', 'email', 'phone',)
     list_filter = ('eduPersonAffiliation','harvardEduFerpaStatus', 'harvardEduEmployeePrivacy', 'harvardEduStudentPrivacy', 'harvardEduSpecialPrivacy', 'harvardEduMailPrivacy', 'harvardEduPhonePrivacy', 'harvardEduOfficeAddressPrivacy',)
-    filter_horizontal = ( 'titles','eduPersonAffiliation', )
-    
+    filter_horizontal = ( 'eduPersonAffiliation', )
+    filter_vertical = ('titles', )
     list_display_links = ( 'id', 'lname',)
     
     fieldsets = [
