@@ -40,7 +40,7 @@ $TEST_GET_STR =  array(
 $GPG_BIN = '/usr/bin/gpg';
 $GPG_DIR = '/home/p/r/prasad/.gnupg';
 $PIN_APP_NAME = 'FAS_FCOR_MCB_GRDB_AUTHZ';
-
+$CHECK_PIN_IP_VALUE = false;
 #12345678|2012-12-06T17:18:44Z|140.247.10.93|FAS_FCOR_MCB_GRDB_AUTHZ|P&mail=raman_prasad%40harvard.edu|sn=Prasad|givenname=Raman 
 
 class AuthZChecker {
@@ -114,7 +114,7 @@ class AuthZChecker {
         $gnupg_resource = gnupg_init();
         $decrypted_parts = gnupg_decrypt($gnupg_resource, $this->encrypted_azp_token);
         
-        if (!(gnupg_geterror($gnupg_resource)=== false)){
+        if (gnupg_geterror($gnupg_resource)!= false){
             $this->err_found = true;
             $this->err_layer1_decrypt_failed = true;
             $this->err_msg = gnupg_geterror($gnupg_resource);
@@ -137,10 +137,10 @@ class AuthZChecker {
         Layer 3: Authentication Data and Attribute List Strings
         e.g. 12345678|2012-12-06T17:18:44Z|140.247.10.93|FAS_FCOR_MCB_GRDB_AUTHZ|P&mail=raman_prasad%40harvard.edu|sn=Prasad|givenname=Raman
         ------------------------------------------------------ */
-        # Skip for now
+        // Skip for now
         $decrypted_data = explode('&', $decrypted_parts);
         print_r($decrypted_data);
-        if (!(count($decrypted_data) == 2)){
+        if (count($decrypted_data) != 2){
             $this->err_found = true;
             $this->err_layer3_not_two_parts = true;
             return;
@@ -151,8 +151,11 @@ class AuthZChecker {
         $attribute_data = $decrypted_data[1];
         echo "<br />attribute_data: $attribute_data";
         
-        # split apart attribute data
+        /* ------------------------------------------------------
+          -- Attribute Data --
+         Should be 3 attributes
         # e.g. mail=raman_prasad%40harvard.edu|sn=Prasad|givenname=Raman
+        ------------------------------------------------------ */
         $this->custom_attributes = array();
         foreach (explode('|', $attribute_data) as $key_val_pair) {
             $key_val_array = explode('=', $key_val_pair);
@@ -160,9 +163,89 @@ class AuthZChecker {
                 $this->custom_attributes[$key_val_array[0]] = $key_val_array[1];
             }
         }
+        
+        /* check for all 3 attributes */
+        if (count($this->custom_attributes)!=3){
+            $this->err_found = true;
+            $this->err_layer3_attribute_data_part_fail = true;
+            $this->err_msg = 'Original string: ' . $attribute_data;
+            
+            return;
+        }
         print_r($this->custom_attributes);
-        print 'ok';
+        print '<br />ok';
 
+        /* ------------------------------------------------------
+        # Layer 4: Authentication Data
+        ------------------------------------------------------ */
+        $authen_data_array = explode('|', $authentication_data);
+         if (count($authen_data_array)!=5){
+                $this->err_found = true;
+                $this->err_layer3_authen_data_part_fail = true;
+                $this->err_msg = 'Original string: ' . $authentication_data;                
+                return;
+            }
+        
+        $user_id = $authen_data_array[0]; 
+        $login_timestamp = $authen_data_array[1]; 
+        $client_ip = $authen_data_array[2]; 
+        $app_id = $authen_data_array[3]; 
+        $id_type = $authen_data_array[4]; 
+        
+        /* 
+            (4a) check application name
+        */
+        global $PIN_APP_NAME;
+        
+        if ($app_id != $PIN_APP_NAME){
+            $this->err_found = true;
+            $this->err_layer4_app_name_not_matched = true;
+            $this->err_msg = 'Given ID [' . $app_id . '] Should be ['. $PIN_APP_NAME . ']';                
+            return; 
+        }
+        print '<br />ok';
+
+        /* 
+            (4b) check the client IP
+        */    
+        global $CHECK_PIN_IP_VALUE;
+        
+        if ($CHECK_PIN_IP_VALUE == true) {
+          // Verify current user's IP address.
+          if ( $client_ip !== $_SERVER['REMOTE_ADDR'] ) {
+            $this->err_found = true;
+            $this->err_layer4_ip_check_failed = true;
+            $this->err_msg = 'Given IP [' . $client_ip . '] Should be ['. $_SERVER['REMOTE_ADDR'] . ']';                
+            return;
+          }
+        }
+        
+        // (4c) Verify time parameter is not longer than 2 minutes old. 
+         // The PHP abs() function converts integers to absolute values (unsigned).
+         // Subtract timestamp value sent by PIN server from the current time (on web server)
+         // 120 equals 2 minutes; could change this to 60 but no more than 180
+         print '<br />request time' . $_SERVER['REQUEST_TIME'];
+         print '<br />login_timestamp time' . $login_timestamp;
+         print '<br />strtotime: ' . strtotime($login_timestamp);
+        // print '<br />abs login_timestamp time' . abs()$login_timestamp;
+        print '<p>';
+              echo ($_SERVER['REQUEST_TIME'] - strtotime($login_timestamp));
+
+        /*
+         * http://stackoverflow.com/questions/365191/how-to-get-time-difference-in-minutes-in-php
+         if (abs($_SERVER['REQUEST_TIME'] - strtotime($login_timestamp) > 120) {
+              $this->err_found = true;
+              $this->err_layer4_token_time_elapsed = true;
+              //$this->err_msg = 'Given IP [' . $client_ip . '] Should be ['. $_SERVER['REMOTE_ADDR'] . ']';                
+           
+         }
+*/
+  /*
+        
+      
+           var $err_layer4_token_time_elapsed = false;
+           var $err_layer4_time_check_exception = false;
+           */
 
     } // end check_azp_token
 }
@@ -173,132 +256,6 @@ $authz_checker->has_err();
     
 
  /*   
-     # break the url into key/value pairs
-     try:
-         self.url_dict = parse_qs(urlparse(self.url_full_path).query)
-     except:
-         self.err_url_parse = True
-         return
-
-     for k, v in self.url_dict.iteritems():
-         self.url_dict.update({k: v[0].strip()})
-     
-     #---------------------------------------------------
-     # Layer 1: Check the "_azp_token" encrypted_data_string 
-     #---------------------------------------------------
-     encrypted_data_string = self.url_dict.get(URL_KEY_AZP_TOKEN, None)
-     if encrypted_data_string is None:
-         self.err_no_azp_token = True
-         return
-             
-     if not os.path.isdir(self.gnupghome):
-         self.add_err('directory not found: %s' % self.gnupghome)
-         self.err_layer1_gnupg_home_directory_not_found = True
-         return
-         
-     gpg_obj = gnupg.GPG(gnupghome=self.gnupghome, verbose=self.is_debug)
-     
-     if self.gpg_passphrase:
-         decrypted_data = gpg_obj.decrypt(encrypted_data_string\
-                                         , passphrase=self.gpg_passphrase)
-     else:
-         decrypted_data = gpg_obj.decrypt(encrypted_data_string)
-         
-     #print '\n\ndecrypted_data: %s' % decrypted_data
-
-     if decrypted_data is None:
-         self.err_layer1_decrypt_failed = True
-         return
-     
-     #---------------------------------------------------
-     # Layer 2: Unencrypted Data and Signature Strings
-     #   - split by '&' and decode each part
-     #   - check that the first parameter has been encoded the AuthZProxy's PGP private key
-     #---------------------------------------------------
-     decrypt_parts = decrypted_data.data.split('&')
-     if not len(decrypt_parts) == 2:
-         self.err_layer2_decrypt_failed = True
-         return
-         
-     url_encoded_data_string,  url_encoded_signature_string = decrypt_parts
-
-     decoded_data_string = urllib.unquote(url_encoded_data_string) 
-     self.decoded_data_string_for_potential_err_msg = decoded_data_string
-     decoded_signature_string = urllib.unquote(url_encoded_signature_string)
-
-     #print 'url_encoded_data_string: [%s]' % decoded_data_string
-     #print ''
-     #print 'url_encoded_signature_string: [%s]' % decoded_signature_string
-     
-     pgp_msg = self.get_pgp_msg(decoded_data_string, decoded_signature_string)
-
-     v = gpg_obj.verify(pgp_msg)
-     if v is not None and v.valid==True:
-         pass
-         #print 'yes'
-     else:
-         self.add_err('Signature fail.\npgp message: [%s]\ndecoded_data_string: [%s]\ndecoded_signature_string: [%s]' % (pgp_msg, decoded_data_string, decoded_signature_string))
-         self.err_layer2_signature_fail = True
-         return
-
-     #---------------------------------------------------
-     # Layer 3: Authentication Data and Attribute List Strings
-     #---------------------------------------------------
-     # 12345678|2012-12-06T17:18:44Z|140.247.10.93|FAS_FCOR_MCB_GRDB_AUTHZ|P&mail=raman_prasad%40harvard.edu|sn=Prasad|givenname=Raman
-     
-     layer3_data_parts = decoded_data_string.split('&')
-     if not len(layer3_data_parts) == 2:
-         self.err_layer3_not_two_parts = True
-         return
-     authentication_data, attribute_data = layer3_data_parts
-
-     # split apart attribute data
-     # e.g. mail=raman_prasad%40harvard.edu|sn=Prasad|givenname=Raman
-     try:
-         self.custom_attributes = {}
-         for pair in attribute_data.split('|'):
-             if len(pair.split('=')) == 2:
-                 k, v = pair.split('=')
-                 self.custom_attributes[k] = urllib.unquote(v)            
-     except:
-         self.err_layer3_attribute_data_part_fail = True
-         self.add_err('original attribute_data string: [%s]' % attribute_data)
-         return
-                     
-     
-     # split apart Authentication Data 
-     authen_data_parts = authentication_data.split('|')
-     if not len(authen_data_parts) == 5:
-         self.err_layer3_authen_data_part_fail = True
-         self.add_err('original authentication_data string: [%s]' % authentication_data)
-         return        
-         
-     #---------------------------------------------------
-     # Layer 4: Authentication Data
-     #---------------------------------------------------
-     # 12345678|2012-12-06T17:18:44Z|140.247.10.93|FAS_FCOR_MCB_GRDB_AUTHZ|P
-     user_id, login_timestamp, client_ip, app_id, id_type = authen_data_parts
-
-     # (4a) check application name
-     if not app_id in self.app_names:
-         self.err_layer4_app_name_not_matched = True
-         self.add_err('authz app id: [%s] actual app id: [%s]' % (app_id, self.app_names))
-         self.add_err('\nAdditional info: \ndecoded_data_string: [%s]\ndecoded_signature_string: [%s]' % ( decoded_data_string, decoded_signature_string))
-         
-         return
-     
-     #return # skip IP and timestamp verifiation settings
-     
-     # (4b) verify the IP
-     if self.is_debug and self.user_request_ip == '127.0.0.1':
-         # allow client address of 127.0.0.1 for testing
-         pass
-     elif not client_ip == self.user_request_ip:
-         self.err_layer4_ip_check_failed = True            
-         self.add_err('authz client_ip: [%s] user ip: [%s]' % (client_ip, self.user_request_ip))
-         self.add_err('\nAdditional info: \ndecoded_data_string: [%s]\ndecoded_signature_string: [%s]' % (decoded_data_string, decoded_signature_string))
-         
-         return
              
      # (4c) Check the timestamp
      dt_pat = '%Y-%m-%dT%H:%M:%SZ'
