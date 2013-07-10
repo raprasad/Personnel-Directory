@@ -15,10 +15,11 @@ class AuthZChecker {
         $my_authz_params = array(
                  "GPG_DIR" => '/home/p/r/prasad/.gnupg',
                  "PIN_APP_NAME" => 'FAS_FCOR_MCB_GRDB_AUTHZ',
-                 "CHECK_PIN_IP_VALUE" => false
+                 "CHECK_PIN_IP_VALUE" => false,
+                 "PRINT_DEBUG_STATMENTS" => true
                  );
 
-        $authz_checker = new AuthZChecker($_GET, $my_authz_params);
+        $authz_checker = new AuthZChecker($TEST_GET_ARRAY, $my_authz_params);
 
             if ($authz_checker->has_err()== false){
                 $wp_user_data = $authz_checker->get_wp_user_data_array();
@@ -27,6 +28,7 @@ class AuthZChecker {
                 print "<h2>err</h2>";
                 $authz_checker->show_error();
             };
+ 
     */
     
     /* -------------------------------------------------------------------
@@ -57,6 +59,7 @@ class AuthZChecker {
     var $AUTHZ_KEY_GPG_DIR = 'GPG_DIR';
     var $AUTHZ_KEY_PIN_APP_NAME = 'PIN_APP_NAME';
     var $AUTHZ_KEY_CHECK_PIN_IP_VALUE = 'CHECK_PIN_IP_VALUE';
+    var $AUTHZ_KEY_PRINT_DEBUG_STATMENTS = 'PRINT_DEBUG_STATMENTS';
     
     var $show_debug_msg = false;        // show print statements as it runs
     
@@ -102,6 +105,12 @@ class AuthZChecker {
     ------------------------------------------------------ */
     function __construct($GET_ARRAY, $authz_params) {
 
+        // Is the debug flag set to true via $authz_params (this shows print statements)?
+        if (isset($authz_params[$this->AUTHZ_KEY_PRINT_DEBUG_STATMENTS])==true){
+    $authz_params[$this->AUTHZ_KEY_PRINT_DEBUG_STATMENTS];
+            $this->show_debug_msg = $authz_params[$this->AUTHZ_KEY_PRINT_DEBUG_STATMENTS];
+        }
+    
         // Make sure $authz_params has the needed keys
         //
         $this->debug_msg_bold('Constructor');
@@ -116,6 +125,9 @@ class AuthZChecker {
                  return;
             }
         }
+        
+       
+        
 
         $this->authz_params = $authz_params;
         
@@ -415,11 +427,13 @@ class AuthZChecker {
     Test Run
  ---------------------------------------- */
      
-
+/*
+// uncomment this to run the "authz_checker.php" file directly
 $my_authz_params = array(
          "GPG_DIR" => '/home/p/r/prasad/.gnupg',
          "PIN_APP_NAME" => 'FAS_FCOR_MCB_GRDB_AUTHZ',
-         "CHECK_PIN_IP_VALUE" => false
+         "CHECK_PIN_IP_VALUE" => false,
+         "PRINT_DEBUG_STATMENTS" => true
          );
          
 $authz_checker = new AuthZChecker($TEST_GET_ARRAY, $my_authz_params);
@@ -432,5 +446,5 @@ $authz_checker = new AuthZChecker($TEST_GET_ARRAY, $my_authz_params);
         $authz_checker->show_error();
     };
 
-  
+ */ 
 ?>
