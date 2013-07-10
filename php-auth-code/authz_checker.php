@@ -8,21 +8,25 @@ ini_set('display_errors', '1');
 $TEST_GET_ARRAY =  array(
     "_azp_token" => "-----BEGIN+PGP+MESSAGE-----%0A++++Version%3A+GnuPG+v1.4.10+%28GNU%2FLinux%29%0A%0A++++hQEMA2DXKM0Yr%2BmKAQf%2BP7cfudt%2Bd9QomgN9%2BBgQDjS5U8tljS7NPjUPUM1bc3CP%0A++++OhMa2g5HKRxc6NQgkpV2BGAiMrYYLMg6MKT%2FHTUCTxeymAtGnNg15q0KzsXDAbcf%0A++++j%2B1hx9cx4JiYmV2B5sht%2Fhf277RNXj2Bmt5ugdE5HXlwohugaW0HcHNqnZ2yzkv8%0A++++Nskz96G81u1hvGvchPTgTmyY1KgDaZz%2FJq4hAxO3JqXl8Hrr5EWb7JSy%2F471QDAV%0A++++gBSNQrrws%2BHRmXVj0XQwpqwAesuyIIKVqaEDZ38MSWldtl%2BncQiBVX01URTx1suG%0A++++oWdopXa21l8TV8ZZx2Znsr1S1evmgrmG99Q6pMjNitLAAwFiFCU4Pz1DItZXVudx%0A++++1XzNfXglVgWex7CGlTnE7L%2BWj2HIGx1hsZpjJxIQKZzNwDgBtGNen25yCqGwGlkV%0A++++5shNPxjGl4MnlhXm%2BL%2FkFolQXtcDbi9KL5NqHfkTUU3fSVfKLkFWlR29qTzokaBn%0A++++5W1FlzPesyUAl5ZJ1Zv4hJDrWCYqNPgB0y9S8RiuUN7MDS1lGJc6juTYjbOrVHJz%0A++++tagqrzaD260BuYOUETjyGBrzwCscq0m3Bt90mlQwPP4VRCjR8A%3D%3D%0A++++%3D%2B9V8%0A++++-----END+PGP+MESSAGE-----%0A++++");
 
-$GPG_DIR = '/home/p/r/prasad/.gnupg';
-$PIN_APP_NAME = 'FAS_FCOR_MCB_GRDB_AUTHZ';
-$CHECK_PIN_IP_VALUE = false;
-#12345678|2012-12-06T17:18:44Z|140.247.10.93|FAS_FCOR_MCB_GRDB_AUTHZ|P&mail=raman_prasad%40harvard.edu|sn=Prasad|givenname=Raman 
 
 class AuthZChecker {
     /*
         Example usage: 
-        $authz_checker = new AuthZChecker($TEST_GET_STR);
-        if ($authz_checker->has_err()== false){
-            $wp_user_data = $authz_checker->get_wp_user_data_array();
-        }else{
-            $authz_checker->show_error();
-        };
+        $my_authz_params = array(
+                 "GPG_DIR" => '/home/p/r/prasad/.gnupg',
+                 "PIN_APP_NAME" => 'FAS_FCOR_MCB_GRDB_AUTHZ',
+                 "CHECK_PIN_IP_VALUE" => false
+                 );
 
+        $authz_checker = new AuthZChecker($_GET, $my_authz_params);
+
+            if ($authz_checker->has_err()== false){
+                $wp_user_data = $authz_checker->get_wp_user_data_array();
+                print_r($wp_user_data);
+            }else{
+                print "<h2>err</h2>";
+                $authz_checker->show_error();
+            };
     */
     
     /* -------------------------------------------------------------------
@@ -53,6 +57,8 @@ class AuthZChecker {
     var $AUTHZ_KEY_GPG_DIR = 'GPG_DIR';
     var $AUTHZ_KEY_PIN_APP_NAME = 'PIN_APP_NAME';
     var $AUTHZ_KEY_CHECK_PIN_IP_VALUE = 'CHECK_PIN_IP_VALUE';
+    
+    var $show_debug_msg = false;        // show print statements as it runs
     
     /* example:
     $test_authz_params = array(
@@ -98,6 +104,10 @@ class AuthZChecker {
 
         // Make sure $authz_params has the needed keys
         //
+        $this->debug_msg_bold('Constructor');
+        $this->debug_msg('Check the authz params');
+        $this->debug_show_array($authz_params);
+
         foreach (array($this->AUTHZ_KEY_GPG_DIR, $this->AUTHZ_KEY_PIN_APP_NAME, $this->AUTHZ_KEY_CHECK_PIN_IP_VALUE) as $authz_param_key){
             if (isset($authz_params[$authz_param_key])==false){
                  $this->err_found = true;
@@ -108,8 +118,10 @@ class AuthZChecker {
         }
 
         $this->authz_params = $authz_params;
-
+        
+        
         // Make sure the GET params include the authz_proxy_token_key
+        $this->debug_msg("Check the GET params for the authz token key ['$this->authz_proxy_token_key']");
         if (isset($GET_ARRAY[$this->authz_proxy_token_key])==false){
             $this->err_found = true;
             $this->err_no_azp_token = true;
@@ -121,18 +133,32 @@ class AuthZChecker {
         $this->check_azp_token();
     }
     
-    
+    function debug_show_array($arr){
+        if ($this->show_debug_msg){
+            print_r($arr);
+        }
+    }
+    function debug_msg($msg){
+        if ($this->show_debug_msg){
+            print '<div style="padding:5px 15px;">' . $msg . '</div>';
+        }
+    }
+    function debug_msg_bold($msg){
+        if ($this->show_debug_msg){
+            print '<br /><br /><b>' . $msg . '</b>';
+        }
+    }
     
     /* ------------------------------------------------------ 
         Did the authentication produce an error
     ------------------------------------------------------ */    
     function has_err(){
         if ($this->err_found){
-            print '<br />err found';
-            print '<br >' . $this->err_msg;
+            $this->debug_msg('Err found<br >' . $this->err_msg);
+            
             return true;
         }else{
-            print '<br />No err';
+            $this->debug_msg('No err');
             return false;
         }
     }
@@ -142,13 +168,14 @@ class AuthZChecker {
     ------------------------------------------------------ */
     function get_wp_user_data_array(){
         // Build an array of user data for Wordpress
+        $this->debug_msg_bold('Return WP user data (get_wp_user_data_array)');
         
         if ($this->has_err() == true){
             return null;
         }
         
-        $wp_userdata = array( 'user_email' => $this->custom_attributes['email'],
-		    'user_login' => $this->custom_attributes['email'],
+        $wp_userdata = array( 'user_email' => $this->custom_attributes['mail'],
+		    'user_login' => $this->custom_attributes['mail'],
 		    'first_name' => $this->custom_attributes['givenname'],
 		    'last_name' => $this->custom_attributes['sn']
 		    );
@@ -158,7 +185,7 @@ class AuthZChecker {
 
  
     function check_azp_token(){
-        print '<br />check_azp_token';
+        $this->debug_msg_bold('Check Authz Token');
         
         /* (1) verify GPG_DIR */
         if(!(is_dir( $this->authz_params[$this->AUTHZ_KEY_GPG_DIR]))){
@@ -169,13 +196,15 @@ class AuthZChecker {
         }
         putenv("GNUPGHOME=" .  $this->authz_params[$this->AUTHZ_KEY_GPG_DIR]);
         
-        print '<br />gpg dir found--';
-
+        $this->debug_msg('GPG dir found and GNUPGHOME set');
+         
         /* ------------------------------------------------------ 
          Layer 1: Check the "_azp_token" encrypted_data_string 
          ------------------------------------------------------ */
         /* (2) decode azp_token */
         $gnupg_resource = gnupg_init();
+        $this->debug_msg('GPG init done');
+
         $decrypted_parts = gnupg_decrypt($gnupg_resource, $this->encrypted_azp_token);
         
         if (gnupg_geterror($gnupg_resource)!= false){
@@ -185,8 +214,9 @@ class AuthZChecker {
             return;
         }
         
-        echo $decrypted_parts;
         $decrypted_parts = urldecode($decrypted_parts);
+        $this->debug_msg('decrypted_parts: '. $decrypted_parts);
+
         /* ------------------------------------------------------ 
             Layer 2: Unencrypted Data and Signature Strings
            - split by '&' and decode each part
@@ -200,23 +230,28 @@ class AuthZChecker {
         ------------------------------------------------------ */
         // Skip for now
         $decrypted_data = explode('&', $decrypted_parts);
-        print_r($decrypted_data);
+        
+        $this->debug_msg('decrypted_data');
+        $this->debug_show_array($decrypted_data);
+        
         if (count($decrypted_data) != 2){
             $this->err_found = true;
             $this->err_layer3_not_two_parts = true;
             return;
         }
         $authentication_data = $decrypted_data[0];
-        echo "<br />authentication_data: $authentication_data";
-        
+        $this->debug_msg("authentication_data: $authentication_data");
+                
         $attribute_data = $decrypted_data[1];
-        echo "<br />attribute_data: $attribute_data";
+        $this->debug_msg("attribute_data: $attribute_data");
         
         /* ------------------------------------------------------
           -- Attribute Data --
          Should be 3 attributes
         # e.g. mail=raman_prasad@harvard.edu|sn=Prasad|givenname=Raman
         ------------------------------------------------------ */
+        $this->debug_msg_bold("Process attributes (email, first name (givenname), last name (sn))");
+        
         $this->custom_attributes = array();
         //$attribute_data = 'mail=joanne_chang@harvard.edu|sn=Chang|givenname='; # test for failure, no 'givenname'
         foreach (explode('|', $attribute_data) as $key_val_pair) {
@@ -243,12 +278,15 @@ class AuthZChecker {
             
             return;
         }
-        print_r($this->custom_attributes);
-        print '<br />ok';
+        $this->debug_msg("custom_attributes: ");
+        $this->debug_show_array($this->custom_attributes);
+
 
         /* ------------------------------------------------------
         # Layer 4: Authentication Data
         ------------------------------------------------------ */
+        $this->debug_msg_bold("Layer 4: Authentication Data");
+        
         $authen_data_array = explode('|', $authentication_data);
          if (count($authen_data_array)!=5){
                 $this->err_found = true;
@@ -266,6 +304,7 @@ class AuthZChecker {
         /* -----------------------------------------------------------------
             (4a) check application name
         ----------------------------------------------------------------- */
+        $this->debug_msg("(4a) check application name");
         
         if ($app_id != $this->authz_params[$this->AUTHZ_KEY_PIN_APP_NAME]){
             $this->err_found = true;
@@ -273,11 +312,12 @@ class AuthZChecker {
             $this->err_msg = 'Given ID [' . $app_id . '] Should be ['. $PIN_APP_NAME . ']';                
             return; 
         }
-        print '<br />ok';
+        $this->debug_msg("ok");
 
         /* -----------------------------------------------------------------
             (4b) check the client IP
         ----------------------------------------------------------------- */
+        $this->debug_msg("(4b) check the client IP");
         
         if ($this->authz_params[$this->AUTHZ_KEY_CHECK_PIN_IP_VALUE] == true) {
           // Verify current user's IP address.
@@ -288,17 +328,20 @@ class AuthZChecker {
             return;
           }
         }
-        
+        $this->debug_msg("ok");
         /* -----------------------------------------------------------------
             (4c) Verify time parameter is not longer than 2 minutes (120 seconds) old. 
 
             Subtract timestamp value sent by PIN server from the current time (on web server)    
         ----------------------------------------------------------------- */
+        $this->debug_msg("(4c) Verify time parameter is not longer than 2 minutes (120 seconds) old. ");
+        
          $request_time_seconds = $_SERVER['REQUEST_TIME'];
          $login_timestamp_seconds = strtotime($login_timestamp);
          //$login_timestamp_seconds = $request_time_seconds + 10; // test
          $elapsed_seconds = abs($request_time_seconds - $login_timestamp_seconds);
-         print "<br />request time seconds: $request_time_seconds<br />login_timestamp_seconds: $login_timestamp_seconds<br />elapsed_seconds: $elapsed_seconds";
+         
+         $this->debug_msg("request time seconds: $request_time_seconds<br />login_timestamp_seconds: $login_timestamp_seconds<br />elapsed_seconds: $elapsed_seconds");
          
          if ($elapsed_seconds > $this->expiration_limit_in_seconds){
              $this->err_found = true;
@@ -306,6 +349,7 @@ class AuthZChecker {
              $this->err_msg = 'More than 120 seconds elapsed [' . $elapsed_seconds. ' seconds]';
              return;
          }
+         $this->debug_msg("ok");
          
 
     } // end check_azp_token
@@ -372,13 +416,13 @@ class AuthZChecker {
  ---------------------------------------- */
      
 
-$test_authz_params = array(
+$my_authz_params = array(
          "GPG_DIR" => '/home/p/r/prasad/.gnupg',
          "PIN_APP_NAME" => 'FAS_FCOR_MCB_GRDB_AUTHZ',
          "CHECK_PIN_IP_VALUE" => false
          );
          
-$authz_checker = new AuthZChecker($TEST_GET_ARRAY, $test_authz_params);
+$authz_checker = new AuthZChecker($TEST_GET_ARRAY, $my_authz_params);
 
     if ($authz_checker->has_err()== false){
         $wp_user_data = $authz_checker->get_wp_user_data_array();
@@ -387,5 +431,6 @@ $authz_checker = new AuthZChecker($TEST_GET_ARRAY, $test_authz_params);
         print "<h2>err</h2>";
         $authz_checker->show_error();
     };
-   
+
+  
 ?>
