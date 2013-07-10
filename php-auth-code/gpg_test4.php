@@ -16,8 +16,6 @@
              - Looks for an expired timestamp (more than 2 minutes)
 */
 
-$test_msg = "https://adminapps.mcb.harvard.edu/mcb-grad/hu_azp/callback?_azp_token=-----BEGIN+PGP+MESSAGE-----%0D%0AVersion%3A+Cryptix+OpenPGP+0.20050418%0D%0A%0D%0AhQEMA%2FVD%2FGQNXDZ2AQgArrnoVaz2SsDBvIcIdi%2BtRbOwlXZf0S0jNA3OCpL%2F5D5b%0D%0ADQIXT5D9urAGJPyjN0kB%2BG2%2BL0e22fJy3S3QjDhbYPm97GKywHUJDW3K9BagYEaD%0D%0A1Mry8XRGDY5bf%2F6xfMq%2Bq3tT%2FGs1WpfDQLT7zzzRa0T6dOusP9RjWm6%2F%2FfLrPtSw%0D%0AIko8vmgL7vdvU4QjqmUb0dMsUw0VEfsagRDcSTAglfhryOFWf7%2B%2BDerJqagHQSdH%0D%0A%2BGYkxCCcdwvWe9Ta7qJcVIM%2BfFaqYTDSSjE1h%2Fz3XDeilUgJAyCVRl%2FRCcoWwhrn%0D%0A47lSV2DxIjVo1D%2BWQeFR%2BbPS9S3uU9af%2BdLM2Zh4sqUBKdYB12oj1GVnVaHxTSA2%0D%0Ac5kKetfDdS5mAv3prmQdkYrPoF1gBwNfM1NGjjDC38Uhz%2BhDavCVVsx6FaVP2Tvu%0D%0AncCgA2Zrj46lTObQsbNcIYUgi5XNA2c3ArrbKGc2LmgFqaNjUP6LrcysurpojK74%0D%0ArAVJiXcGaeD8meCGZGZyMlm%2FcYpAPY5ikknTq88c70Eq2EVHFvV2HKB7FACrTkSH%0D%0AsKs5ZaSAvm2h7%2BxtvXIjhixkzRRxDiq5qZJq6VIK9bYkbzsJ%2FCVxJ0htkHq8yuYG%0D%0AtMAe3iE54kaGZpaCm4ozjqXPQa47%2FASgcUBOd6qMX%2FFLnOdWzxENCSwtXX1qEZvT%0D%0ALqOsDULeZtwtrNXWB11zO4As4etNbd%2FQbAjET%2FkhjJgBNuOw5vUQZ28g8Q%3D%3D%0D%0A%3DgFeY%0D%0A-----END+PGP+MESSAGE-----%0D%0A";
-
 $TEST_GET_STR =  array(
     "_azp_token" => "-----BEGIN PGP MESSAGE-----
     Version: GnuPG v1.4.10 (GNU/Linux)
@@ -68,6 +66,7 @@ class AuthZChecker {
     
     // To hold user 'sn', 'email', and 'givenname'
     var $custom_attributes = array();
+    var $expiration_limit_in_seconds = 120;
     
     function has_err(){
         if ($this->err_found){
@@ -78,6 +77,22 @@ class AuthZChecker {
             print '<br />No err';
             return false;
         }
+    }
+
+    function get_wp_user_data_array(){
+        // Build an array of user data for Wordpress
+        
+        if ($this->has_err() == true){
+            return null;
+        }
+        
+        $wp_userdata = array( 'user_email' => $this->custom_attributes['email'],
+		    'user_login' => $this->custom_attributes['email'],
+		    'first_name' => $this->custom_attributes['givenname'],
+		    'last_name' => $this->custom_attributes['sn']
+		    );
+		
+		return $wp_userdata;
     }
 
     function __construct($GET_ARRAY) {
@@ -154,13 +169,23 @@ class AuthZChecker {
         /* ------------------------------------------------------
           -- Attribute Data --
          Should be 3 attributes
-        # e.g. mail=raman_prasad%40harvard.edu|sn=Prasad|givenname=Raman
+        # e.g. mail=raman_prasad@harvard.edu|sn=Prasad|givenname=Raman
         ------------------------------------------------------ */
         $this->custom_attributes = array();
+        //$attribute_data = 'mail=joanne_chang@harvard.edu|sn=Chang|givenname='; # test for failure, no 'givenname'
         foreach (explode('|', $attribute_data) as $key_val_pair) {
             $key_val_array = explode('=', $key_val_pair);
             if (count($key_val_array) == 2){
-                $this->custom_attributes[$key_val_array[0]] = $key_val_array[1];
+                $attr_key = $key_val_array[0];
+                $attr_val = $key_val_array[1];
+                if (($attr_val == null)||($attr_val == '')){
+                    $this->err_found = true;
+                    $this->err_missing_user_vals = true;
+                    //$this->err_layer3_attribute_data_part_fail = true;
+                    $this->err_msg = "No value for user attribute '$attr_key'";
+                    return;
+                }
+                $this->custom_attributes[$attr_key] = $attr_val;
             }
         }
         
@@ -168,7 +193,7 @@ class AuthZChecker {
         if (count($this->custom_attributes)!=3){
             $this->err_found = true;
             $this->err_layer3_attribute_data_part_fail = true;
-            $this->err_msg = 'Original string: ' . $attribute_data;
+            $this->err_msg = 'Not all attributes found.  Original string: ' . $attribute_data;
             
             return;
         }
@@ -192,9 +217,9 @@ class AuthZChecker {
         $app_id = $authen_data_array[3]; 
         $id_type = $authen_data_array[4]; 
         
-        /* 
+        /* -----------------------------------------------------------------
             (4a) check application name
-        */
+        ----------------------------------------------------------------- */
         global $PIN_APP_NAME;
         
         if ($app_id != $PIN_APP_NAME){
@@ -205,9 +230,9 @@ class AuthZChecker {
         }
         print '<br />ok';
 
-        /* 
+        /* -----------------------------------------------------------------
             (4b) check the client IP
-        */    
+        ----------------------------------------------------------------- */
         global $CHECK_PIN_IP_VALUE;
         
         if ($CHECK_PIN_IP_VALUE == true) {
@@ -231,7 +256,7 @@ class AuthZChecker {
          $elapsed_seconds = abs($request_time_seconds - $login_timestamp_seconds);
          print "<br />request time seconds: $request_time_seconds<br />login_timestamp_seconds: $login_timestamp_seconds<br />elapsed_seconds: $elapsed_seconds";
          
-         if ($elapsed_seconds > 120){
+         if ($elapsed_seconds > $this->expiration_limit_in_seconds){
              $this->err_found = true;
              $this->err_layer4_token_time_elapsed = true;
              $this->err_msg = 'More than 120 seconds elapsed [' . $elapsed_seconds. ' seconds]';
@@ -240,7 +265,7 @@ class AuthZChecker {
          
 
     } // end check_azp_token
-}
+}  // end AuthZChecker class
 
 $authz_checker = new AuthZChecker($TEST_GET_STR);
 $authz_checker->has_err();
