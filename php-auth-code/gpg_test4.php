@@ -220,32 +220,24 @@ class AuthZChecker {
           }
         }
         
-        // (4c) Verify time parameter is not longer than 2 minutes old. 
-         // The PHP abs() function converts integers to absolute values (unsigned).
-         // Subtract timestamp value sent by PIN server from the current time (on web server)
-         // 120 equals 2 minutes; could change this to 60 but no more than 180
-         print '<br />request time' . $_SERVER['REQUEST_TIME'];
-         print '<br />login_timestamp time' . $login_timestamp;
-         print '<br />strtotime: ' . strtotime($login_timestamp);
-        // print '<br />abs login_timestamp time' . abs()$login_timestamp;
-        print '<p>';
-              echo ($_SERVER['REQUEST_TIME'] - strtotime($login_timestamp));
+        /* -----------------------------------------------------------------
+            (4c) Verify time parameter is not longer than 2 minutes (120 seconds) old. 
 
-        /*
-         * http://stackoverflow.com/questions/365191/how-to-get-time-difference-in-minutes-in-php
-         if (abs($_SERVER['REQUEST_TIME'] - strtotime($login_timestamp) > 120) {
-              $this->err_found = true;
-              $this->err_layer4_token_time_elapsed = true;
-              //$this->err_msg = 'Given IP [' . $client_ip . '] Should be ['. $_SERVER['REMOTE_ADDR'] . ']';                
-           
+            Subtract timestamp value sent by PIN server from the current time (on web server)    
+        ----------------------------------------------------------------- */
+         $request_time_seconds = $_SERVER['REQUEST_TIME'];
+         $login_timestamp_seconds = strtotime($login_timestamp);
+         //$login_timestamp_seconds = $request_time_seconds + 10; // test
+         $elapsed_seconds = abs($request_time_seconds - $login_timestamp_seconds);
+         print "<br />request time seconds: $request_time_seconds<br />login_timestamp_seconds: $login_timestamp_seconds<br />elapsed_seconds: $elapsed_seconds";
+         
+         if ($elapsed_seconds > 120){
+             $this->err_found = true;
+             $this->err_layer4_token_time_elapsed = true;
+             $this->err_msg = 'More than 120 seconds elapsed [' . $elapsed_seconds. ' seconds]';
+             return;
          }
-*/
-  /*
-        
-      
-           var $err_layer4_token_time_elapsed = false;
-           var $err_layer4_time_check_exception = false;
-           */
+         
 
     } // end check_azp_token
 }
