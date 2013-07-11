@@ -4,7 +4,11 @@
 //error_reporting(E_ALL);
 //ini_set('display_errors', '1');
 
+/*
+https://mcbintranet.unix.fas.harvard.edu/wp-content/plugins/hu-authz-plugin/authz_checker.php?_azp_token=-----BEGIN+PGP+MESSAGE-----%0A++++Version%3A+GnuPG+v1.4.10+%28GNU%2FLinux%29%0A%0A++++hQEMA2DXKM0Yr%2BmKAQf%2BP7cfudt%2Bd9QomgN9%2BBgQDjS5U8tljS7NPjUPUM1bc3CP%0A++++OhMa2g5HKRxc6NQgkpV2BGAiMrYYLMg6MKT%2FHTUCTxeymAtGnNg15q0KzsXDAbcf%0A++++j%2B1hx9cx4JiYmV2B5sht%2Fhf277RNXj2Bmt5ugdE5HXlwohugaW0HcHNqnZ2yzkv8%0A++++Nskz96G81u1hvGvchPTgTmyY1KgDaZz%2FJq4hAxO3JqXl8Hrr5EWb7JSy%2F471QDAV%0A++++gBSNQrrws%2BHRmXVj0XQwpqwAesuyIIKVqaEDZ38MSWldtl%2BncQiBVX01URTx1suG%0A++++oWdopXa21l8TV8ZZx2Znsr1S1evmgrmG99Q6pMjNitLAAwFiFCU4Pz1DItZXVudx%0A++++1XzNfXglVgWex7CGlTnE7L%2BWj2HIGx1hsZpjJxIQKZzNwDgBtGNen25yCqGwGlkV%0A++++5shNPxjGl4MnlhXm%2BL%2FkFolQXtcDbi9KL5NqHfkTUU3fSVfKLkFWlR29qTzokaBn%0A++++5W1FlzPesyUAl5ZJ1Zv4hJDrWCYqNPgB0y9S8RiuUN7MDS1lGJc6juTYjbOrVHJz%0A++++tagqrzaD260BuYOUETjyGBrzwCscq0m3Bt90mlQwPP4VRCjR8A%3D%3D%0A++++%3D%2B9V8%0A++++-----END+PGP+MESSAGE-----%0A++++
 
+https://mcbintranet.unix.fas.harvard.edu/wp-content/plugins/hu-authz-plugin/authz_checker.php?_azp_token=-----BEGIN+PGP+MESSAGE-----%0A++++Version%3A+GnuPG+v1.4.10+%28GNU%2FLinux%29%0A%0A++++hQEMA2DXKM0Yr%2BmKAQf%2BP7cfudt%2Bd9QomgN9%2BBgQDjS5U8tljS7NPjUPUM1bc3CP%0A++++OhMa2g5HKRxc6NQgkpV2BGAiMrYYLMg6MKT%2FHTUCTxeymAtGnNg15q0KzsXDAbcf%0A++++j%2B1hx9cx4JiYmV2B5sht%2Fhf277RNXj2Bmt5ugdE5HXlwohugaW0HcHNqnZ2yzkv8%0A++++Nskz96G81u1hvGvchPTgTmyY1KgDaZz%2FJq4hAxO3JqXl8Hrr5EWb7JSy%2F471QDAV%0A++++gBSNQrrws%2BHRmXVj0XQwpqwAesuyIIKVqaEDZ38MSWldtl%2BncQiBVX01URTx1suG%0A++++oWdopXa21l8TV8ZZx2Znsr1S1evmgrmG99Q6pMjNitLAAwFiFCU4Pz1DItZXVudx%0A++++1XzNfXglVgWex7CGlTnE7L%2BWj2HIGx1hsZpjJxIQKZzNwDgBtGNen25yCqGwGlkV%0A++++5shNPxjGl4MnlhXm%2BL%2FkFolQXtcDbi9KL5NqHfkTUU3fSVfKLkFWlR29qTzokaBn%0A++++5W1FlzPesyUAl5ZJ1Zv4hJDrWCYqNPgB0y9S8RiuUN7MDS1lGJc6juTYjbOrVHJz%0A++++tagqrzaD260BuYOUETjyGBrzwCscq0m3Bt90mlQwPP4VRCjR8A%3D%3D%0A++++%3D%2B9V8%0A++++-----END+PGP+MESSAGE-----%0A++++
+*/
 $TEST_GET_ARRAY =  array(
     "_azp_token" => "-----BEGIN+PGP+MESSAGE-----%0A++++Version%3A+GnuPG+v1.4.10+%28GNU%2FLinux%29%0A%0A++++hQEMA2DXKM0Yr%2BmKAQf%2BP7cfudt%2Bd9QomgN9%2BBgQDjS5U8tljS7NPjUPUM1bc3CP%0A++++OhMa2g5HKRxc6NQgkpV2BGAiMrYYLMg6MKT%2FHTUCTxeymAtGnNg15q0KzsXDAbcf%0A++++j%2B1hx9cx4JiYmV2B5sht%2Fhf277RNXj2Bmt5ugdE5HXlwohugaW0HcHNqnZ2yzkv8%0A++++Nskz96G81u1hvGvchPTgTmyY1KgDaZz%2FJq4hAxO3JqXl8Hrr5EWb7JSy%2F471QDAV%0A++++gBSNQrrws%2BHRmXVj0XQwpqwAesuyIIKVqaEDZ38MSWldtl%2BncQiBVX01URTx1suG%0A++++oWdopXa21l8TV8ZZx2Znsr1S1evmgrmG99Q6pMjNitLAAwFiFCU4Pz1DItZXVudx%0A++++1XzNfXglVgWex7CGlTnE7L%2BWj2HIGx1hsZpjJxIQKZzNwDgBtGNen25yCqGwGlkV%0A++++5shNPxjGl4MnlhXm%2BL%2FkFolQXtcDbi9KL5NqHfkTUU3fSVfKLkFWlR29qTzokaBn%0A++++5W1FlzPesyUAl5ZJ1Zv4hJDrWCYqNPgB0y9S8RiuUN7MDS1lGJc6juTYjbOrVHJz%0A++++tagqrzaD260BuYOUETjyGBrzwCscq0m3Bt90mlQwPP4VRCjR8A%3D%3D%0A++++%3D%2B9V8%0A++++-----END+PGP+MESSAGE-----%0A++++");
 
@@ -25,7 +29,7 @@ class AuthZChecker {
                 print_r($wp_user_data);
             }else{
                 print "<h2>err</h2>";
-                $authz_checker->show_error();
+                 print $authz_checker->get_error_msg_html();
             };
  
     */
@@ -140,7 +144,7 @@ class AuthZChecker {
         }    
             
         // Check the url
-        $this->encrypted_azp_token = urldecode($GET_ARRAY[$this->authz_proxy_token_key]);
+        $this->encrypted_azp_token = $GET_ARRAY[$this->authz_proxy_token_key];
         $this->check_azp_token();
     }
     
@@ -182,13 +186,15 @@ class AuthZChecker {
         $this->debug_msg_bold('Return WP user data (get_wp_user_data_array)');
         
         if ($this->has_err() == true){
-            return null;
+        //    return null;
         }
         
+        $display_name = $this->custom_attributes['givenname'] . ' ' . $this->custom_attributes['sn'];
         $wp_userdata = array( 'user_email' => $this->custom_attributes['mail'],
 		    'user_login' => $this->custom_attributes['mail'],
 		    'first_name' => $this->custom_attributes['givenname'],
-		    'last_name' => $this->custom_attributes['sn']
+		    'last_name' => $this->custom_attributes['sn'],
+		    'display_name' => $display_name
 		    );
 		
 		return $wp_userdata;
@@ -292,7 +298,7 @@ class AuthZChecker {
         $this->debug_msg("custom_attributes: ");
         $this->debug_show_array($this->custom_attributes);
 
-
+        //return;
         /* ------------------------------------------------------
         # Layer 4: Authentication Data
         ------------------------------------------------------ */
@@ -429,8 +435,9 @@ class AuthZChecker {
 /* ----------------------------------------
     Test Run
  ---------------------------------------- */
-     
-/*
+
+/*     
+
 // uncomment this to run the "authz_checker.php" file directly
 $my_authz_params = array(
          "GPG_DIR" => '/home/p/r/prasad/.gnupg',
@@ -439,15 +446,16 @@ $my_authz_params = array(
          "PRINT_DEBUG_STATMENTS" => true
          );
          
-$authz_checker = new AuthZChecker($TEST_GET_ARRAY, $my_authz_params);
-
+    //$authz_checker = new AuthZChecker($TEST_GET_ARRAY, $my_authz_params);
+    $authz_checker = new AuthZChecker($_GET, $my_authz_params); // use the actual get string
+    print_r($_GET);
     if ($authz_checker->has_err()== false){
         $wp_user_data = $authz_checker->get_wp_user_data_array();
         print_r($wp_user_data);
     }else{
         print "<h2>err</h2>";
-        $authz_checker->show_error();
+        print $authz_checker->get_error_msg_html();
     };
+*/
 
- */ 
 ?>

@@ -113,11 +113,18 @@ function get_wp_user_from_hu_authz($wp_user_data){
 	    //$user = new WP_Error( 'denied', __("<strong>ERROR</strong>: Not a valid user for this system") );
 	     
 	    // Setup the minimum required user information 
+	    $wp_user_data["user_registered"] = date("Y-m-d H:i:s");
+	    
 	    $new_user_id = wp_insert_user( $wp_user_data ); // A new user has been created
  
 	    // Load the new user info
-	    $wp_user = new WP_User ($new_user_id);
+	    $wp_user = new WP_User($new_user_id);
     }// end make new user
+    
+//    $password = 'HelloWorld';
+ //   wp_set_password( $password, $user_id );
+    
+  //  $user = wp_signon( $creds, false );
 
     return $wp_user;
     
@@ -146,19 +153,14 @@ function hu_pin2_authz_check(){
         
     $authz_options_array = get_option('hu_authz_options');
     
-
-    $TEST_GET_ARRAY =  array(
-        "_azp_token" => "-----BEGIN+PGP+MESSAGE-----%0A++++Version%3A+GnuPG+v1.4.10+%28GNU%2FLinux%29%0A%0A++++hQEMA2DXKM0Yr%2BmKAQf%2BP7cfudt%2Bd9QomgN9%2BBgQDjS5U8tljS7NPjUPUM1bc3CP%0A++++OhMa2g5HKRxc6NQgkpV2BGAiMrYYLMg6MKT%2FHTUCTxeymAtGnNg15q0KzsXDAbcf%0A++++j%2B1hx9cx4JiYmV2B5sht%2Fhf277RNXj2Bmt5ugdE5HXlwohugaW0HcHNqnZ2yzkv8%0A++++Nskz96G81u1hvGvchPTgTmyY1KgDaZz%2FJq4hAxO3JqXl8Hrr5EWb7JSy%2F471QDAV%0A++++gBSNQrrws%2BHRmXVj0XQwpqwAesuyIIKVqaEDZ38MSWldtl%2BncQiBVX01URTx1suG%0A++++oWdopXa21l8TV8ZZx2Znsr1S1evmgrmG99Q6pMjNitLAAwFiFCU4Pz1DItZXVudx%0A++++1XzNfXglVgWex7CGlTnE7L%2BWj2HIGx1hsZpjJxIQKZzNwDgBtGNen25yCqGwGlkV%0A++++5shNPxjGl4MnlhXm%2BL%2FkFolQXtcDbi9KL5NqHfkTUU3fSVfKLkFWlR29qTzokaBn%0A++++5W1FlzPesyUAl5ZJ1Zv4hJDrWCYqNPgB0y9S8RiuUN7MDS1lGJc6juTYjbOrVHJz%0A++++tagqrzaD260BuYOUETjyGBrzwCscq0m3Bt90mlQwPP4VRCjR8A%3D%3D%0A++++%3D%2B9V8%0A++++-----END+PGP+MESSAGE-----%0A++++");
         
-    $authz_checker = new AuthZChecker($TEST_GET_ARRAY, $authz_options_array);
-
-
-    //$authz_checker = new AuthZChecker($_GET, $authz_options_array);
-
+    //$authz_checker = new AuthZChecker($TEST_GET_ARRAY, $authz_options_array);
+    $authz_checker = new AuthZChecker($_GET, $authz_options_array);
 
 
     // If there's an authentication error, then fail and return an error message
-    if ($authz_checker->has_err()== true){
+   
+   /* if ($authz_checker->has_err()== true){
         print_r($authz_options_array);
         
         print "<p>$authz_checker->encrypted_azp_token</p>";
@@ -170,13 +172,15 @@ function hu_pin2_authz_check(){
 	    $user = new WP_Error( 'denied', __($user_err_msg) );
         return $user;
     }
-    
+    */
     
     $wp_user_data = $authz_checker->get_wp_user_data_array();
-    
+   // print_r($wp_user_data);
+//    print 'blah';
+    //exit;
     // Comment this line if you wish to fall back on WordPress authentication
     // Useful for times when the external service is offline
-    //remove_action('authenticate', 'wp_authenticate_username_password', 20);
+    //remove_action('authenticate', 'wp_authenticate_username_password', 20);ff
     
     
     return get_wp_user_from_hu_authz($wp_user_data);
