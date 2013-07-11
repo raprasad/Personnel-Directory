@@ -21,7 +21,7 @@ function hu_plugin_handler(){
         }
     }
 }
-add_action('parse_request', 'hu_plugin_handler');
+//add_action('parse_request', 'hu_plugin_handler');
 
 //http://gabrielharper.com/blog/2012/09/wordpress-custom-urls-for-plugins/
 ?>
