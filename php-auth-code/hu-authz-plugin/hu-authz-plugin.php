@@ -96,38 +96,59 @@ function hu_authz_set_default_options_array() {
 
 function get_wp_user_from_hu_authz($wp_user_data){
 
-    $userobj = new WP_User();
-    
     // Attempt to retrieve the user from the database
-    $user = $userobj->get_data_by( 'email', $wp_user_data['user_email'] ); // Does not return a WP_User object <img src='http://ben.lobaugh.net/blog/wp-includes/images/smilies/icon_sad.gif' alt=':(' class='wp-smiley' />
+    $wp_user = get_user_by( 'login', $wp_user_data['user_login'] ); // Does not return a WP_User object <img src='http://ben.lobaugh.net/blog/wp-includes/images/smilies/icon_sad.gif' alt=':(' class='wp-smiley' />
 
-    // Attempt to load up the user with that ID
-    $wp_user = new WP_User($user->ID); 
- 
-    if( $user->ID == 0 ) {
-	    // The user does not currently exist in the WordPress user table.
-	    // You have arrived at a fork in the road, choose your destiny wisely
-	     
-	    // If you do not want to add new users to WordPress if they do not
-	    // already exist uncomment the following line and remove the user creation code
-	    //$user = new WP_Error( 'denied', __("<strong>ERROR</strong>: Not a valid user for this system") );
-	     
-	    // Setup the minimum required user information 
-	    $wp_user_data["user_registered"] = date("Y-m-d H:i:s");
-	    
-	    $new_user_id = wp_insert_user( $wp_user_data ); // A new user has been created
- 
-	    // Load the new user info
-	    $wp_user = new WP_User($new_user_id);
-    }// end make new user
-    
-//    $password = 'HelloWorld';
- //   wp_set_password( $password, $user_id );
-    
-  //  $user = wp_signon( $creds, false );
+    // The is not in Wordpress, create the user!
+    if ($wp_user === false){
+        
+        // Setup the minimum required user information 
+    	$wp_user_data["user_registered"] = date("Y-m-d H:i:s");     // Add a registration date/time
 
+    	// Add the user
+    	$new_user_id = wp_insert_user( $wp_user_data ); // A new user has been created
+        
+        // Retrieve the user
+        $wp_user = get_user_by( 'login', $wp_user_data['user_login'] );
+        
+    }
+    
+    $onetime_password = wp_generate_password();
+//    print "<p>id: $wp_user->ID ";
+    wp_set_password( $password, $wp_user->ID );
+  //  print '?';
+    $creds = array();
+    $creds['user_login'] = $wp_user->user_login;
+    $creds['user_password'] = $onetime_password;
+    $creds['remember'] = true;
+    //print_r($creds);
+    $logged_in_user = wp_signon( $creds, false );
+//    print 'maybe?';
+    if (is_user_logged_in()){
+        print 'yay';
+    }else{
+        print 'no!';
+    }
     return $wp_user;
+    /*
+    $onetime_password = wp_generate_password();
+    //print $onetime_password;
+    wp_set_password( $password, $wp_user->ID );
+    $creds = array();
+    $creds['user_login'] = $wp_user_data['user_login'];
+    $creds['user_password'] = $onetime_password;
+    $creds['remember'] = true;
+    //print 'so far';
+    $logged_in_user = wp_signon( $creds, false );
+    //print 'logged_in_user'. $logged_in_user;
+    //print $logged_in_user->get_error_message();
     
+    if ( is_wp_error($logged_in_user) )
+        echo $logged_in_user->get_error_message();
+    }
+
+    return $logged_in_user;
+    */
 }
 
 
@@ -140,27 +161,69 @@ function hu_pin2_authz_check(){
     if(!(in_array($GLOBALS['pagenow'], array('wp-login.php')))){
         return;
     }
+
+    //base64_encode($str)
+    $userobj = new WP_User();
+    print 'ok1';
+
+    $existing_user = get_user_by( 'login', 'raman_prasad@harvard.edu'); 
     
+    if ($existing_user === false){
+        print 'user not found!';
+        return;
+    }
+    print 'ok2';
+    print "existing_user->user_login: " . $existing_user->user_login;
+    
+    $onetime_password = wp_generate_password($len=20);
+    print "<p>onetime_password: $onetime_password ";
+
+    wp_update_user( array ( 'ID' => $existing_user->ID, 'user_pass' => $onetime_password ) ) ;
+    wp_cache_delete($existing_user->ID, 'users');
+    print "<p>wp_cache_delete";
+    $existing_user = get_user_by( 'login', 'raman_prasad@harvard.edu'); 
+    print "<p>get user again: $existing_user->user_login";
+    
+      $creds = array();
+        $creds['user_login'] = $existing_user->user_login;// $wp_user->user_login;
+        $creds['user_password'] = $onetime_password; //'1234567'; // $onetime_password; //'1234567'; //$onetime_password;
+        $creds['remember'] = true;
+        //print_r($creds);
+        $logged_in_user = wp_signon( $creds, false );
+    //    print 'maybe?';
+        if (is_user_logged_in()){
+            wp_safe_redirect('https://mcbintranet.unix.fas.harvard.edu');
+   
+            print 'yay';
+        }else{
+            print $logged_in_user->get_error_message();
+            print 'no! not logged in!';
+        }
+ 
+     return;
     if(!(isset($_GET['_azp_token']))){
         return;
     }
         
-    //$test_authz_params = array(
-    //         "GPG_DIR" => '/home/p/r/prasad/.gnupg',
-    //         "PIN_APP_NAME" => 'FAS_FCOR_MCB_GRDB_AUTHZ',
-    //         "CHECK_PIN_IP_VALUE" => false,
-    //         "PRINT_DEBUG_STATMENTS" => true         );
+    $authz_options_array = array(
+             "GPG_DIR" => '/home/p/r/prasad/.gnupg',
+             "PIN_APP_NAME" => 'FAS_FCOR_MCB_GRDB_AUTHZ',
+             "CHECK_PIN_IP_VALUE" => 'false',
+             "PRINT_DEBUG_STATMENTS" => 'true'         );
         
-    $authz_options_array = get_option('hu_authz_options');
-    
+    //$authz_options_array = get_option('hu_authz_options');
         
     //$authz_checker = new AuthZChecker($TEST_GET_ARRAY, $authz_options_array);
     $authz_checker = new AuthZChecker($_GET, $authz_options_array);
 
-
+     $wp_user_data = $authz_checker->get_wp_user_data_array();
+     // print_r($wp_user_data);
+      return get_wp_user_from_hu_authz($wp_user_data);
+      
+      return;
+    //
     // If there's an authentication error, then fail and return an error message
-   
-   /* if ($authz_checker->has_err()== true){
+   if ($authz_checker->has_err()== true){
         print_r($authz_options_array);
         
         print "<p>$authz_checker->encrypted_azp_token</p>";
@@ -172,9 +235,10 @@ function hu_pin2_authz_check(){
 	    $user = new WP_Error( 'denied', __($user_err_msg) );
         return $user;
     }
-    */
+  
     
-    $wp_user_data = $authz_checker->get_wp_user_data_array();
+  //  $wp_user_data = $authz_checker->get_wp_user_data_array();
+//    return;
    // print_r($wp_user_data);
 //    print 'blah';
     //exit;
