@@ -86,6 +86,11 @@ function login_wp_user_from_hu_authz($wp_user_data){
             return;
             
         }
+    }else{
+        // update the user info based on AuthZ proxy values
+        $wp_user_data['ID'] = $wp_user->ID;
+        wp_update_user($wp_user_data) ;
+        
     }
     
     // (3) Create new user password
@@ -116,6 +121,7 @@ function login_wp_user_from_hu_authz($wp_user_data){
         return;
     }
 
+    // redirect to the front page
     wp_safe_redirect('https://mcbintranet.unix.fas.harvard.edu');
     
 } // login_wp_user_from_hu_authz
