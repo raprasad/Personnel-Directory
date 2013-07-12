@@ -25,7 +25,7 @@ class AuthZChecker {
         $authz_checker = new AuthZChecker($TEST_GET_ARRAY, $my_authz_params);
 
             if ($authz_checker->has_err()== false){
-                $wp_user_data = $authz_checker->get_wp_user_data_array();
+                $wp_user_data = $authz_checker->get_wp_user_data_array_safe();
                 print_r($wp_user_data);
             }else{
                 print "<h2>err</h2>";
@@ -181,13 +181,18 @@ class AuthZChecker {
     /* ------------------------------------------------------ 
         Authentication passed, get the Wordpress user data
     ------------------------------------------------------ */
-    function get_wp_user_data_array(){
+    function get_wp_user_data_array_safe(){
+        $this->debug_msg_bold('Return -- safe -- WP user data (get_wp_user_data_array)');
+        
+         if ($this->has_err() == true){
+                return null;
+         }
+         return $this->get_wp_user_data_array_direct();
+    }
+    
+    function get_wp_user_data_array_direct(){
         // Build an array of user data for Wordpress
         $this->debug_msg_bold('Return WP user data (get_wp_user_data_array)');
-        
-        if ($this->has_err() == true){
-        //    return null;
-        }
         
         $display_name = $this->custom_attributes['givenname'] . ' ' . $this->custom_attributes['sn'];
         $wp_userdata = array( 'user_email' => $this->custom_attributes['mail'],
@@ -450,7 +455,7 @@ $my_authz_params = array(
     $authz_checker = new AuthZChecker($_GET, $my_authz_params); // use the actual get string
     print_r($_GET);
     if ($authz_checker->has_err()== false){
-        $wp_user_data = $authz_checker->get_wp_user_data_array();
+        $wp_user_data = $authz_checker->get_wp_user_data_array_safe();
         print_r($wp_user_data);
     }else{
         print "<h2>err</h2>";

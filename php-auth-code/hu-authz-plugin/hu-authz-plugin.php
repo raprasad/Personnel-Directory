@@ -24,37 +24,6 @@ register_activation_hook( __FILE__, 'hu_authz_set_default_options_array' );
 
 //add_filter( 'authenticate', 'hu_pin2_authz_check', 10, 3 );
 add_action('init', 'hu_pin2_authz_check');
-/*
-function GET_login() {
-    //Check that we are on the log-in page
-    if(in_array($GLOBALS['pagenow'], array('wp-login.php'))):
-
-    //Check that log and pwd are set
-        if(isset($_GET['log']) && isset($_GET['pwd'])):
-            $creds = array();
-            $creds['user_login'] = $_GET['log'];
-            $creds['user_password'] = $_GET['pwd'];
-            $creds['remember'] = true; //Do you want the log-in details to be remembered?
-
-            //Where do we go after log-in?
-            $redirect_to = admin_url('profile.php');
-
-            //Try logging in
-            $user = wp_signon( $creds, false );
-
-            if ( is_wp_error($user) ){
-                //Log-in failed
-            }else{
-                //Logged in, now redirect
-                $redirect_to = admin_url('profile.php');
-                wp_safe_redirect($redirect_to);
-            exit();
-            }
-        endif;
-    endif;
-    //If we are not on the log-in page or credentials are not set, carry on as normal
-}
-*/
 
 
 function hu_authz_set_default_options_array() {
@@ -79,27 +48,27 @@ function hu_authz_set_default_options_array() {
                     'PRINT_DEBUG_STATMENTS' => 'false'
             );
 
-            update_option('hu_authz_options', $authz_options_array );
-        
-        
-        //$authz_options_array = get_option('hu_authz_options');
-        //$authz_options_array['PRINT_DEBUG_STATMENTS'] = 'false';
-        //update_option( 'hu_authz_options', $authz_options_array );
-        //if ( $existing_options['version'] < 1.1 ) {
-        //    $existing_options['track_outgoing_links'] = false;
-        //    $existing_options['version'] = "1.1";
-        //    update_option( 'hu_authz_options', $authz_options_array );
-        //}
+          update_option('hu_authz_options', $authz_options_array );
     }
 }
 
+function show_fail_message($err_msg){
+    print '<div style="border:2px solid #ff0000;margin:20px; padding:20px; width:400px;"><b>PIN Login Failed</b><p>'. $err_msg . '</p></div>';
+    
+}
 
-function get_wp_user_from_hu_authz($wp_user_data){
+/* -------------------------------------------------------------------
+    Using the first name, last name, and email from the AuthZProxy Login:
+        - Retrieve the user--or create a new one
+        - Log the user in
+        - Redirect to the front page
+------------------------------------------------------------------- */
+function login_wp_user_from_hu_authz($wp_user_data){
 
-    // Attempt to retrieve the user from the database
-    $wp_user = get_user_by( 'login', $wp_user_data['user_login'] ); // Does not return a WP_User object <img src='http://ben.lobaugh.net/blog/wp-includes/images/smilies/icon_sad.gif' alt=':(' class='wp-smiley' />
-
-    // The is not in Wordpress, create the user!
+    // (1) Attempt to retrieve the user from the database
+    $wp_user = get_user_by( 'login', $wp_user_data['user_login'] ); 
+    
+    // (2) Failed, user is not in Wordpress, create the user!
     if ($wp_user === false){
         
         // Setup the minimum required user information 
@@ -109,47 +78,47 @@ function get_wp_user_from_hu_authz($wp_user_data){
     	$new_user_id = wp_insert_user( $wp_user_data ); // A new user has been created
         
         // Retrieve the user
-        $wp_user = get_user_by( 'login', $wp_user_data['user_login'] );
+        $wp_user = get_user_by( 'id', $new_user_id );
         
+        // !! Really failed, could not make the user
+        if ($wp_user===false){
+            show_fail_message('Sorry!  Failed to create user!');
+            return;
+            
+        }
     }
     
-    $onetime_password = wp_generate_password();
-//    print "<p>id: $wp_user->ID ";
-    wp_set_password( $password, $wp_user->ID );
-  //  print '?';
+    // (3) Create new user password
+    $onetime_password = wp_generate_password($len=20);      // onetime password, 20 chars long
+    //print "<p>onetime_password: $onetime_password ";
+
+    // (4) Set the new password
+    wp_update_user( array ( 'ID' => $wp_user->ID, 'user_pass' => $onetime_password ) ) ;
+
+    // (5) Delete the user credentials (possible extra step but want to avoid caching)
+    wp_cache_delete($existing_user->ID, 'users');
+    print "<p>wp_cache_delete";
+    
+    // (6) Re-retrieve user with newly set password
+    $wp_user = get_user_by( 'login', $wp_user_data['user_login']);  
+    print '<p>next line?';
+
+    // (7) Log the user in with the new password
     $creds = array();
     $creds['user_login'] = $wp_user->user_login;
     $creds['user_password'] = $onetime_password;
     $creds['remember'] = true;
-    //print_r($creds);
+
     $logged_in_user = wp_signon( $creds, false );
-//    print 'maybe?';
-    if (is_user_logged_in()){
-        print 'yay';
-    }else{
-        print 'no!';
-    }
-    return $wp_user;
-    /*
-    $onetime_password = wp_generate_password();
-    //print $onetime_password;
-    wp_set_password( $password, $wp_user->ID );
-    $creds = array();
-    $creds['user_login'] = $wp_user_data['user_login'];
-    $creds['user_password'] = $onetime_password;
-    $creds['remember'] = true;
-    //print 'so far';
-    $logged_in_user = wp_signon( $creds, false );
-    //print 'logged_in_user'. $logged_in_user;
-    //print $logged_in_user->get_error_message();
-    
-    if ( is_wp_error($logged_in_user) )
-        echo $logged_in_user->get_error_message();
+    if ( is_wp_error($logged_in_user) ){
+        print $logged_in_user->get_error_message();
+        print 'Login failed';
+        return;
     }
 
-    return $logged_in_user;
-    */
-}
+    wp_safe_redirect('https://mcbintranet.unix.fas.harvard.edu');
+    
+} // login_wp_user_from_hu_authz
 
 
 
@@ -157,97 +126,70 @@ function get_wp_user_from_hu_authz($wp_user_data){
 function hu_pin2_authz_check(){
     
     
-    //Check that we are on the log-in page
+    // (1) If we're not on the login page, then leave
     if(!(in_array($GLOBALS['pagenow'], array('wp-login.php')))){
         return;
     }
 
-    //base64_encode($str)
-    $userobj = new WP_User();
-    print 'ok1';
-
-    $existing_user = get_user_by( 'login', 'raman_prasad@harvard.edu'); 
-    
-    if ($existing_user === false){
-        print 'user not found!';
-        return;
-    }
-    print 'ok2';
-    print "existing_user->user_login: " . $existing_user->user_login;
-    
-    $onetime_password = wp_generate_password($len=20);
-    print "<p>onetime_password: $onetime_password ";
-
-    wp_update_user( array ( 'ID' => $existing_user->ID, 'user_pass' => $onetime_password ) ) ;
-    wp_cache_delete($existing_user->ID, 'users');
-    print "<p>wp_cache_delete";
-    $existing_user = get_user_by( 'login', 'raman_prasad@harvard.edu'); 
-    print "<p>get user again: $existing_user->user_login";
-    
-      $creds = array();
-        $creds['user_login'] = $existing_user->user_login;// $wp_user->user_login;
-        $creds['user_password'] = $onetime_password; //'1234567'; // $onetime_password; //'1234567'; //$onetime_password;
-        $creds['remember'] = true;
-        //print_r($creds);
-        $logged_in_user = wp_signon( $creds, false );
-    //    print 'maybe?';
-        if (is_user_logged_in()){
-            wp_safe_redirect('https://mcbintranet.unix.fas.harvard.edu');
-   
-            print 'yay';
-        }else{
-            print $logged_in_user->get_error_message();
-            print 'no! not logged in!';
-        }
- 
-     return;
+    // (2) If there's no AuthZProxy "_azp_token" in the url, then leave
     if(!(isset($_GET['_azp_token']))){
         return;
     }
-        
+    
+    // (3) Set options manually or pull them from the database
+    
+    // manual setting of AuthZ options
     $authz_options_array = array(
              "GPG_DIR" => '/home/p/r/prasad/.gnupg',
              "PIN_APP_NAME" => 'FAS_FCOR_MCB_GRDB_AUTHZ',
              "CHECK_PIN_IP_VALUE" => 'false',
              "PRINT_DEBUG_STATMENTS" => 'true'         );
         
-    //$authz_options_array = get_option('hu_authz_options');
-        
+    $authz_options_array = get_option('hu_authz_options');
+    
+    // Run the checker with a test array that contains a key named "_azp_token" and a full AuthZProxy message
     //$authz_checker = new AuthZChecker($TEST_GET_ARRAY, $authz_options_array);
+    
+    // Use the GET string, the AuthZChecker processes the url value indicated by the key "_azp_token"
     $authz_checker = new AuthZChecker($_GET, $authz_options_array);
 
-     $wp_user_data = $authz_checker->get_wp_user_data_array();
-     // print_r($wp_user_data);
-      return get_wp_user_from_hu_authz($wp_user_data);
+    /* --------------------------------
+        START: temporarily skipping the authz error check, using a test url
+     -------------------------------- */
+    
+    // Pull the user information from the AuthZ checker
+    $wp_user_data = $authz_checker->get_wp_user_data_array_direct();
+    if ($wp_user_data == null){
+        show_fail_message('Sorry!  Failed to retrieve the user data from the Pin Login!');
+        return;
+    }
+    
+    // Log in with the $wp_user_data
+    login_wp_user_from_hu_authz($wp_user_data);
+    return;
+    /* --------------------------------
+      END: temp
+    -------------------------------- */
       
-      return;
     //
     // If there's an authentication error, then fail and return an error message
    if ($authz_checker->has_err()== true){
-        print_r($authz_options_array);
-        
-        print "<p>$authz_checker->encrypted_azp_token</p>";
-        
-        
+       print '<div style="width:400px;border:2px solid #ff0000;margin:20px; padding:20px"><b>PIN Login Failed</b><p>';
+       
         print  $authz_checker->get_error_msg_html();
-        exit;
-        $user_err_msg = "<strong>ERROR</strong>: " . $authz_checker->get_error_msg_html();
-	    $user = new WP_Error( 'denied', __($user_err_msg) );
-        return $user;
+        print '</p></div>';
+        return;
     }
-  
     
-  //  $wp_user_data = $authz_checker->get_wp_user_data_array();
-//    return;
-   // print_r($wp_user_data);
-//    print 'blah';
-    //exit;
-    // Comment this line if you wish to fall back on WordPress authentication
-    // Useful for times when the external service is offline
-    //remove_action('authenticate', 'wp_authenticate_username_password', 20);ff
+    // Pull the user information from the AuthZ checker
+    $wp_user_data = $authz_checker->get_wp_user_data_array_safe();
+    if ($wp_user_data == null){
+        show_fail_message('Sorry!  Failed to retrieve the user data from the Pin Login!');
+        return;
+    }
     
-    
-    return get_wp_user_from_hu_authz($wp_user_data);
+    // Log in with the $wp_user_data
+    login_wp_user_from_hu_authz($wp_user_data);
 
 }  // end hu_pin2_authz_check
 
