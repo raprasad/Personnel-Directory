@@ -62,7 +62,7 @@ admin.site.register(Office, OfficeAdmin)
 
 class GraduateYearAdmin(admin.ModelAdmin):
     save_on_top = True
-    search_fields = ('name',)
+    search_fields = ('name', 'slug',)
 admin.site.register(GraduateYear, GraduateYearAdmin)
 
 

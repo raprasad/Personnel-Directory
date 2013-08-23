@@ -145,6 +145,11 @@ class GraduateProgram(models.Model):
 class GraduateYear(models.Model):
     """ Not Applicable, G1, G2, G3, etc."""
     name = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(blank=True)
+    
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(GraduateYear, self).save(*args, **kwargs)
     
     def __unicode__(self):
         return self.name
