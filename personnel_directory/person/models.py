@@ -25,7 +25,8 @@ APPOINTMENT_TYPE_ID_STAFF = 28
 APPOINTMENT_TYPE_ID_GRADUATE_STUDENT_VISITING_FELLOW =33
 
 PERSON_PROFILE_IMAGE_SIZE = 150
-PERSON_PROFILE_THUMB_IMAGE_SIZE = 100
+PERSON_PROFILE_THUMB_IMAGE_SIZE_WIDTH = 100
+PERSON_PROFILE_THUMB_IMAGE_SIZE_HEIGHT = 125
 
 THUMB_UPLOAD_TO = os.path.join('person', 'thumb')
 PROFILE_UPLOAD_TO = os.path.join('person', 'profile')
@@ -219,7 +220,7 @@ class Person(models.Model):
     
     profile_image = models.ImageField(upload_to=PROFILE_UPLOAD_TO, help_text='Proportionately Resized to (%s x %s)' % (PERSON_PROFILE_IMAGE_SIZE, PERSON_PROFILE_IMAGE_SIZE),blank=True, null=True)   
 
-    thumb_image = models.ImageField(upload_to=THUMB_UPLOAD_TO, help_text='Auto-filled, Proportionately Resized to (%s x %s)' % (PERSON_PROFILE_THUMB_IMAGE_SIZE, PERSON_PROFILE_THUMB_IMAGE_SIZE),  blank=True, null=True)
+    thumb_image = models.ImageField(upload_to=THUMB_UPLOAD_TO, help_text='Auto-filled, Proportionately Resized to (%s x %s)' % (PERSON_PROFILE_THUMB_IMAGE_SIZE_WIDTH, PERSON_PROFILE_THUMB_IMAGE_SIZE_HEIGHT),  blank=True, null=True)
     
     
     id_hash = models.CharField(max_length=100, blank=True)
@@ -361,7 +362,7 @@ class Person(models.Model):
        
         # (2) make a thumbnail
         thumb = Image.open(img_rec.profile_image.file.name)    # open the main image
-        thumb.thumbnail((PERSON_PROFILE_THUMB_IMAGE_SIZE, PERSON_PROFILE_THUMB_IMAGE_SIZE), Image.ANTIALIAS)
+        thumb.thumbnail((PERSON_PROFILE_THUMB_IMAGE_SIZE_WIDTH, PERSON_PROFILE_THUMB_IMAGE_SIZE_HEIGHT), Image.ANTIALIAS)
 
         thumb_full_dirname = os.path.join(settings.MEDIA_ROOT, THUMB_UPLOAD_TO)
         thumb_full_filename = os.path.join(thumb_full_dirname, os.path.basename(img_rec.profile_image.path) )
@@ -386,7 +387,6 @@ class Person(models.Model):
         
         # reconnect save signal
         post_save.connect(Person.update_image_sizes, sender=Person)
-post_save.connect(Person.update_image_sizes, sender=Person)
 
 class SecondaryTitle(models.Model):
     person = models.ForeignKey(Person)
@@ -432,6 +432,7 @@ class ResearchInformation(models.Model):
 from django.db.models.signals import pre_delete, post_save
 #from person.person_info_dump import save_deleted_person_info
 pre_delete.connect(Person.save_deleted_person_info, sender=Person)
+post_save.connect(Person.update_image_sizes, sender=Person)
 
 '''
 from hu_ldap.models import *
