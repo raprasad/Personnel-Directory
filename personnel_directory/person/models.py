@@ -24,7 +24,9 @@ APPOINTMENT_TYPE_ID_STAFF = 28
 
 APPOINTMENT_TYPE_ID_GRADUATE_STUDENT_VISITING_FELLOW =33
 
-PERSON_PROFILE_IMAGE_SIZE = 150
+PERSON_PROFILE_IMAGE_SIZE_WIDTH = 200
+PERSON_PROFILE_IMAGE_SIZE_HEIGHT = 250
+
 PERSON_PROFILE_THUMB_IMAGE_SIZE_WIDTH = 100
 PERSON_PROFILE_THUMB_IMAGE_SIZE_HEIGHT = 125
 
@@ -218,7 +220,7 @@ class Person(models.Model):
         
     alt_search_term = models.CharField(max_length=255, blank=True, help_text='e.g. "Oshea" if name is "O\'shea"')
     
-    profile_image = models.ImageField(upload_to=PROFILE_UPLOAD_TO, help_text='Proportionately Resized to (%s x %s)' % (PERSON_PROFILE_IMAGE_SIZE, PERSON_PROFILE_IMAGE_SIZE),blank=True, null=True)   
+    profile_image = models.ImageField(upload_to=PROFILE_UPLOAD_TO, help_text='Proportionately Resized to (%s x %s)' % (PERSON_PROFILE_IMAGE_SIZE_WIDTH, PERSON_PROFILE_IMAGE_SIZE_HEIGHT),blank=True, null=True)   
 
     thumb_image = models.ImageField(upload_to=THUMB_UPLOAD_TO, help_text='Auto-filled, Proportionately Resized to (%s x %s)' % (PERSON_PROFILE_THUMB_IMAGE_SIZE_WIDTH, PERSON_PROFILE_THUMB_IMAGE_SIZE_HEIGHT),  blank=True, null=True)
     
@@ -355,9 +357,9 @@ class Person(models.Model):
             return
 
         # (1) resize main image
-        if img_rec.profile_image.width > PERSON_PROFILE_IMAGE_SIZE or img_rec.profile_image.height > PERSON_PROFILE_IMAGE_SIZE:
+        if img_rec.profile_image.width > PERSON_PROFILE_IMAGE_SIZE_WIDTH or img_rec.profile_image.height > PERSON_PROFILE_IMAGE_SIZE_HEIGHT:
             im = Image.open(img_rec.profile_image.file.name)   # open image
-            im.thumbnail((PERSON_PROFILE_IMAGE_SIZE, PERSON_PROFILE_IMAGE_SIZE), Image.ANTIALIAS) # resize
+            im.thumbnail((PERSON_PROFILE_IMAGE_SIZE_WIDTH, PERSON_PROFILE_IMAGE_SIZE_HEIGHT), Image.ANTIALIAS) # resize
             im.save(img_rec.profile_image.file.name, quality=90)   #save
        
         # (2) make a thumbnail
