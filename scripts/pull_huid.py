@@ -41,7 +41,9 @@ class HUIDRetriever:
                 minfo = members[0]
                 print minfo.harvardEduIDNumber
                 self.huid_lu.update({ hu_info.uid : minfo.harvardEduIDNumber })
-                self.huid_key_list.append('%s|%s' % (hu_info.id, minfo.harvardEduIDNumber ))
+                self.huid_key_list.append('%s|%s|%s' % (hu_info.id\
+                                            , minfo.harvardEduIDNumber\
+                                            , minfo ))
             if cnt == 10: break
         searcher.close_connection()        
         self.huid_list = self.huid_lu.values()
