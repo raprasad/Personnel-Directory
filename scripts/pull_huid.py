@@ -20,6 +20,7 @@ class HUIDRetriever:
     def __init__(self, output_fname=None):
         self.output_fname = output_fname
         self.huid_list = []
+        self.huid_key_list = []
         self.huid_lu = {}
         self.load_huids()
         
@@ -40,7 +41,8 @@ class HUIDRetriever:
                 minfo = members[0]
                 print minfo.harvardEduIDNumber
                 self.huid_lu.update({ hu_info.uid : minfo.harvardEduIDNumber })
-            #if cnt == 10: break
+                self.huid_key_list.append('%s|%s' % (hu_info.id, minfo.harvardEduIDNumber ))
+            if cnt == 10: break
         searcher.close_connection()        
         self.huid_list = self.huid_lu.values()
         self.huid_list.sort()
@@ -49,6 +51,10 @@ class HUIDRetriever:
         if self.output_fname:
             open(self.output_fname, 'w').write('\n'.join(self.huid_list))
             print 'huids written to file: %s' % self.output_fname
+            
+            keylist_fname = 'keylist-%s' % self.output_fname
+            open(keylist_fname, 'w').write('\n'.join(self.huid_key_list))
+            print 'huid keys written to file: %s' % keylist_fname
             
 if __name__=='__main__':
     HUIDRetriever('huids_2013_1023.txt')
