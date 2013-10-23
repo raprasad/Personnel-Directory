@@ -40,7 +40,7 @@ class HUIDRetriever:
                 minfo = members[0]
                 print minfo.harvardEduIDNumber
                 self.huid_lu.update({ hu_info.uid : minfo.harvardEduIDNumber })
-            if cnt == 10: break
+            #if cnt == 10: break
         searcher.close_connection()        
         self.huid_list = self.huid_lu.values()
         self.huid_list.sort()
