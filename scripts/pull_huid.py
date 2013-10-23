@@ -44,7 +44,7 @@ class HUIDRetriever:
                 self.huid_key_list.append('%s|%s|%s' % (hu_info.id\
                                             , minfo.harvardEduIDNumber\
                                             , hu_info ))
-            if cnt == 10: break
+            #if cnt == 10: break
         searcher.close_connection()        
         self.huid_list = self.huid_lu.values()
         self.huid_list.sort()
