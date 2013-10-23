@@ -39,9 +39,10 @@ class HUIDRetriever:
             if members is not None:
                 minfo = members[0]
                 print minfo.harvardEduIDNumber
-                self.huid_lu.update({ uid : minfo.harvardEduIDNumber })
+                self.huid_lu.update({ hu_info.uid : minfo.harvardEduIDNumber })
                 #outlines.append('%s|%s' % (uid, minfo.harvardEduIDNumber))
-
+            if cnt == 10:
+                break
         searcher.close_connection()        
         self.huid_list = self.huid_lu.keys()
         msg('HUIDs found: %s' % len(self.huid_list))
