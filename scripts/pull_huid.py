@@ -44,7 +44,9 @@ class HUIDRetriever:
             if cnt == 10:
                 break
         searcher.close_connection()        
-        self.huid_list = self.huid_lu.keys()
+        self.huid_list = self.huid_lu.values()
+        self.huid_list.sort()
+        self.huid_list = filter(lambda x: len(x.strip()) > 0, self.huid_list)
         msg('HUIDs found: %s' % len(self.huid_list))
         if self.output_fname:
             open(self.output_fname, 'w').write('\n'.join(self.huid_list))
