@@ -29,7 +29,7 @@ class HarvardPersonInfoAdmin(admin.ModelAdmin):
             , 'harvardEduMailPrivacy', 'harvardEduPhonePrivacy', 'harvardEduOfficeAddressPrivacy',)
             
     search_fields = ('lname','fname', 'email', 'phone',)
-    list_filter = ('eduPersonAffiliation','harvardEduFerpaStatus', 'harvardEduEmployeePrivacy', 'harvardEduStudentPrivacy', 'harvardEduSpecialPrivacy', 'harvardEduMailPrivacy', 'harvardEduPhonePrivacy', 'harvardEduOfficeAddressPrivacy',)
+    list_filter = ('eduPersonAffiliation','harvardEduFerpaStatus', 'harvardEduEmployeePrivacy', 'harvardEduStudentPrivacy', 'harvardEduSpecialPrivacy', 'harvardEduMailPrivacy', 'harvardEduPhonePrivacy', 'harvardEduOfficeAddressPrivacy', 'harvardEduGender')
     filter_horizontal = ( 'eduPersonAffiliation', )
     filter_vertical = ('titles', )
     list_display_links = ( 'id', 'lname',)
