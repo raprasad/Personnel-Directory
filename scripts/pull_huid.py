@@ -59,6 +59,6 @@ class HUIDRetriever:
             print 'huid keys written to file: %s' % keylist_fname
             
 if __name__=='__main__':
-    HUIDRetriever('huids_2013_1023.txt')
+    HUIDRetriever('huids_2013_mmdd.txt')
 
 
