@@ -79,7 +79,7 @@ class HarvardPersonInfo(models.Model):
     # may pertain to grad student listing
     harvardEduImagePrivacy = models.IntegerField('Image Privacy', default=-1)
 
-        
+    harvardEduGender = models.CharField(max_length=10, blank=True, help_text='"M" or "F".  NOT REGULARLY POPULATED - used for a 1-time report')   
     #--------------------------
     # attribute level blocks - not needed for mcb
     #--------------------------    

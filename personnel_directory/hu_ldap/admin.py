@@ -38,7 +38,7 @@ class HarvardPersonInfoAdmin(admin.ModelAdmin):
             ('ldap identifier',  {'fields': [( 'person','uid',), 'person_link', 'last_update',]})
             
             ,('Name / Contact', {'fields': [ ('fname', 'middle_name', 'lname',)\
-                ,  ('email',  'phone'), ]})\
+                ,  ('email',  'phone'), 'harvardEduGender' ]})\
                 
             ,('Address', {'fields': [ 'postal_address', ( 'zipcode', 'state',), ]})\
             ,('Titles', {'fields': [ 'titles', ]})\
