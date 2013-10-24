@@ -98,7 +98,7 @@ class AppointmentType(models.Model):
         ordering = ('name',)
 
 class Lab(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, unique=True, help_text='Please enter as LAST NAME, FIRST NAME')
     url = models.SlugField('slug', blank=True)
     affiliation = models.ForeignKey(PersonAffiliation, on_delete=models.PROTECT)
     name_affil = models.CharField(max_length=255, blank=True, help_text='auto-filled on save')
