@@ -69,4 +69,18 @@ if __name__=='__main__':
     GenderUpdate(huid_gender_file='huid_gender.txt'\
                 , huid_key_file='keylist-huids_2013_1023.txt')
 
+"""
+from personnel_directory.hu_ldap.models import HarvardPersonInfo
+from personnel_directory.person.models import Person
 
+emails = []
+for p in HarvardPersonInfo.objects.select_related('person').filter(harvardEduGender='F'):
+    if not p.person.affiliation.id == 1:
+        emails.append(p.person.email)
+        print '%s|%s|%s|%s' % (p.person.fname, p.person.lname, p.person.email, p.person.title)
+
+#print len(emails)
+    
+
+
+"""

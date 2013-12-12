@@ -30,6 +30,8 @@ LDAP_SERVER = settings.LDAP_SERVER
 ldap.set_option(ldap.OPT_REFERRALS, 0)  # turn off referrals
 ldap.set_option (ldap.OPT_PROTOCOL_VERSION, ldap.VERSION3)  # version 3
 ldap.set_option(ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER)  # allow self-signed cert
+ldap.set_option(ldap.OPT_X_TLS,ldap.OPT_X_TLS_DEMAND)
+ldap.set_option( ldap.OPT_X_TLS_DEMAND, True )
 
 class HUDirectorySearcher:
     """
@@ -50,9 +52,9 @@ class HUDirectorySearcher:
         if settings.__dict__.get('LDAP_SERVER', False):
             self.ldap_url = settings.LDAP_SERVER  
         elif settings.DEBUG:
-            self.ldap_url = 'ldaps://hu-ldap-test.harvard.edu'
+            self.ldap_url = 'ldaps://hu-ldap-test.harvard.edu:636'
         else:
-            self.ldap_url = 'ldaps://hu-ldap.harvard.edu'
+            self.ldap_url = 'ldaps://hu-ldap.harvard.edu:636'
         self.ad_bind_usr = 'uid=%s, ou=applications,o=Harvard University Core,dc=huid,dc=harvard,dc=edu' % CUSTOMER_NAME
         self.ad_bind_pw = CUSTOMER_PW
     
