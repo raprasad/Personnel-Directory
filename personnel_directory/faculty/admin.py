@@ -31,7 +31,7 @@ admin.site.register(WebHost, WebHostAdmin)
 class FacultyLinkAdmin(admin.ModelAdmin):
     save_on_top = True
     search_fields = ('name', )
-    list_filter = ('link_type',)
+    list_filter = ('link_type', 'web_host',)
     list_display= ('faculty_member', 'name', 'url','link_type', 'web_host', 'notes')   
 admin.site.register(FacultyLink, FacultyLinkAdmin)
 
