@@ -184,7 +184,7 @@ class FacultyLink(models.Model):
     sort_order = models.IntegerField()
     
     # used for lab website inventory
-    web_host = models.ForeignKey(WebHost, blank=True, null=True)
+    web_host = models.ForeignKey(WebHost, blank=True, null=True, on_delete=models.PROTECT)
     notes = models.TextField(blank=True, help_text='optional')
     
     def __unicode__(self):
