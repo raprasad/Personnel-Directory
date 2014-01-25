@@ -19,7 +19,11 @@ def fmt_get_vals(get_str):
     if get_str is None or get_str in [-1, '-1']:
         return []
 
-    get_str = str(get_str)
+	try:
+		get_str = str(get_str.decode('ascii', 'ignore'))
+	except:
+		return []	
+	
 
     if not get_str.replace('|', '').replace('-', '').isdigit():
         return []
