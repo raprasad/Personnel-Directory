@@ -15,15 +15,12 @@ QCLAUSE_FILTERS_KEY = 'QCLAUSE_FILTERS_KEY'
 
 PATTERN_CHARS_TO_REMOVE = re.compile("[\<\>\"\'\%\;\(\)\&\+]")
 def sanitize_str(txt):
-
 	if txt is None:
 		return None
-	
 	try:
 		txt = str(txt.decode('ascii', 'ignore'))
 	except:
 		return None
-		
 	return PATTERN_CHARS_TO_REMOVE.sub('', txt)
 	
 	
