@@ -115,6 +115,11 @@ def get_text_search_filter_clauses(search_term):
     if search_term is None:
         return None
         
+	try:
+		search_term = str(get_str.decode('ascii', 'ignore'))
+	except:
+		return None
+		
     attrs_query_like = ['lname', 'fname', 'alt_search_term']
     attrs_phone = ['phone', 'second_phone']
     attrs_email = ['email', 'second_email', 'ad_username']
