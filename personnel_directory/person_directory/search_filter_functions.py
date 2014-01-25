@@ -13,17 +13,28 @@ import re
 
 QCLAUSE_FILTERS_KEY = 'QCLAUSE_FILTERS_KEY'
 
+PATTERN_CHARS_TO_REMOVE = re.compile("[\<\>\"\'\%\;\(\)\&\+]")
+def sanitize_str(txt):
 
+	if txt is None:
+		return None
+	
+	try:
+		txt = str(txt.decode('ascii', 'ignore'))
+	except:
+		return None
+		
+	return PATTERN_CHARS_TO_REMOVE.sub('', txt)
+	
+	
 def fmt_get_vals(get_str):
     # should only have integers, a delimiter '|', or '-' (as in '-1')
     if get_str is None or get_str in [-1, '-1']:
         return []
 
-	try:
-		get_str = str(get_str.decode('ascii', 'ignore'))
-	except:
-		return []	
-	
+	get_str = sanitize_str(get_str)
+	if get_str is None:
+		return []
 
     if not get_str.replace('|', '').replace('-', '').isdigit():
         return []
@@ -115,11 +126,11 @@ def get_text_search_filter_clauses(search_term):
     if search_term is None:
         return None
         
-	try:
-		search_term = str(get_str.decode('ascii', 'ignore'))
-	except:
+	search_term = sanitize_str(search_term)
+	if search_term is None:
 		return None
-		
+
+
     attrs_query_like = ['lname', 'fname', 'alt_search_term']
     attrs_phone = ['phone', 'second_phone']
     attrs_email = ['email', 'second_email', 'ad_username']
