@@ -1,6 +1,6 @@
 #from personnel_directory.common.time_util import *
 from personnel_directory.common.msg_util import *
-from django.core.mail import EmailMultiAlternatives, SMTPConnection
+from django.core.mail import EmailMultiAlternatives
 from django.conf.settings import ADMINS
 
 
