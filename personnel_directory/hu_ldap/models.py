@@ -7,7 +7,7 @@ from personnel_directory.person.models import Person
 
 
 class DirectoryNotificationEmail(models.Model):
-    email = models.EmailField(help_text='A person who receives notice of missing directory information.')
+    email = models.EmailField(help_text='A person who receives notice of missing directory information.', unique=True)
     
     def __unicode__(self):
         return self.email
