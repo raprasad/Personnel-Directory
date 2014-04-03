@@ -53,6 +53,8 @@ def send_privacy_report():
     # filter out objects without privacy information
     msgt('(2) Filtering people without privacy info')    
     no_info = filter(lambda x: x.harvardpersoninfo_set.count()==0, lst)
+    no_info = filter(lambda x: not x.email == 'gradprograms@mcb.harvard.edu', no_info)
+    
     msg('people w/o privacy info: %s' % len(no_info))
 
     # contruct an email
@@ -63,7 +65,7 @@ def send_privacy_report():
     to_addresses = admin_emails
     
     for email in DirectoryNotificationEmail.objects.all().values_list('email', flat=True):
-        admin_emails.append(email)
+        to_addresses.append(email)
     
     #from_email = 'raman_prasad@harvard.edu'
     #to_addresses = ['raman_prasad@harvard.edu', 'prasad@fas.harvard.edu',]
