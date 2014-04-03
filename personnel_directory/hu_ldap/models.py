@@ -10,7 +10,7 @@ class DirectoryNotificationEmail(models.Model):
     email = models.EmailField(help_text='A person who receives notice of missing directory information.')
     
     def __unicode__(self):
-        return self.name
+        return self.email
 
     class Meta:
         ordering = ('email',)

@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class DirectoryNotificationEmailAdmin(admin.ModelAdmin):
     save_on_top = True
-    search_fields = ('name',)
+    search_fields = ('email',)
 admin.site.register(DirectoryNotificationEmail, DirectoryNotificationEmailAdmin)
 
 class HarvardTitleAdmin(admin.ModelAdmin):
