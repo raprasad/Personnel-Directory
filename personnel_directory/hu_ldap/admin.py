@@ -1,7 +1,13 @@
-from personnel_directory.hu_ldap.models import HarvardTitle, HarvardPersonInfo, HarvardAffiliation
+from personnel_directory.hu_ldap.models import HarvardTitle, HarvardPersonInfo, HarvardAffiliation, DirectoryNotificationEmail
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
+
+
+class DirectoryNotificationEmailAdmin(admin.ModelAdmin):
+    save_on_top = True
+    search_fields = ('name',)
+admin.site.register(DirectoryNotificationEmail, DirectoryNotificationEmailAdmin)
 
 class HarvardTitleAdmin(admin.ModelAdmin):
     save_on_top = True

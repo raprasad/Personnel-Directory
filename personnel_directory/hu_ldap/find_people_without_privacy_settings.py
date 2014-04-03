@@ -61,6 +61,10 @@ def send_privacy_report():
     admin_emails = get_admin_email_addresses()    
     from_email = admin_emails[0]
     to_addresses = admin_emails
+    
+    for email in DirectoryNotificationEmail.objects.all():
+        admin_emails.append(email)
+    
     #from_email = 'raman_prasad@harvard.edu'
     #to_addresses = ['raman_prasad@harvard.edu', 'prasad@fas.harvard.edu',]
     if len(no_info) == 0:

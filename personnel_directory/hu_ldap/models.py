@@ -5,6 +5,16 @@ from django.core.urlresolvers import reverse
 
 from personnel_directory.person.models import Person
 
+
+class DirectoryNotificationEmail(models.Model):
+    email = models.EmailField(help_text='A person who receives notice of missing directory information.')
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('email',)
+
 class HarvardTitle(models.Model):
     name = models.CharField(max_length=255)
 
