@@ -29,6 +29,7 @@ from personnel_directory.common.mailer import send_message, get_admin_email_addr
 import sys
 
 from personnel_directory.person.models import Person
+from personnel_directory.hu_ldap.models import DirectoryNotificationEmail
 
 def msg(s):
     try:
