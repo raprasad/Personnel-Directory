@@ -62,7 +62,7 @@ def send_privacy_report():
     from_email = admin_emails[0]
     to_addresses = admin_emails
     
-    for email in DirectoryNotificationEmail.objects.all():
+    for email in DirectoryNotificationEmail.objects.all().values_list('email', flat=True):
         admin_emails.append(email)
     
     #from_email = 'raman_prasad@harvard.edu'
