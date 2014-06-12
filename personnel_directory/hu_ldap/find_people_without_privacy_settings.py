@@ -1,7 +1,7 @@
 """
 Simple script to show people in the directory who lack privacy settings
 
-new crontab under "/home/rprasad"
+new crontab under "/home/username"
 
 # check for people w/o privacy settings every tues morning at 8:30 am
 30 8 * * 2 /usr/bin/python /usr/local/django-apps/mcb/mcb/hu_ldap/find_people_without_privacy_settings.py
@@ -68,8 +68,6 @@ def send_privacy_report():
     for email in DirectoryNotificationEmail.objects.all().values_list('email', flat=True):
         to_addresses.append(email)
     
-    #from_email = 'raman_prasad@harvard.edu'
-    #to_addresses = ['raman_prasad@harvard.edu', 'prasad@fas.harvard.edu',]
     if len(no_info) == 0:
         subject = 'Personnel Privacy Data: Looks Good!' 
         mail_msg = """Every person has a privacy record. (%s)""" % get_datetime_now()

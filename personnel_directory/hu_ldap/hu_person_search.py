@@ -150,11 +150,11 @@ if __name__=='__main__':
                 kw, val = arg.split('=')
                 lu.update({ kw:val})
     else:
-        lu = { 'lname' : 'prasad'
-                , 'fname': 'raman' }
+        lu = { 'lname' : 'smith'
+                , 'fname': 'mike' }
     
     searcher = HUDirectorySearcher() 
-    #kwarg = eval('lname="prasad"')
+    #kwarg = eval('lname="smith"')
     members = searcher.find_people(**lu)
     if members is not None:
         for idx, mi in enumerate(members): print idx+1, mi.show(); dashes()

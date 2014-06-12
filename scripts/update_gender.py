@@ -5,8 +5,8 @@ def dashes(): msg(40*'-')
 def msgt(s): dashes(); msg(s); dashes()
 def msgx(s): dashes(); msg(s); dashes(); sys.exit(0)
 
-sys.path.append('/Users/rprasad/mcb-git/MCB-Website')
-sys.path.append('/Users/rprasad/mcb-git/MCB-Website/mcb_website')
+sys.path.append('/Users/username/mcb-git/MCB-Website')
+sys.path.append('/Users/username/mcb-git/MCB-Website/mcb_website')
 sys.path.append('/var/webapps/django/MCB-Website')
 sys.path.append('/var/webapps/django/MCB-Website/mcb_website')
 

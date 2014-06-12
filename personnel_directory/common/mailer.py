@@ -8,7 +8,7 @@ def get_admin_email_addresses():
     """Return the 1st admin email address from the settings file
     Example of format:
      ADMINS = (\
-         ('Raman Prasad', 'rprasad@cgr.harvard.edu'),\
+         ('Fname Lname', 'someone@cgr.harvard.edu'),\
     )
     """
     if ADMINS is None: return None

@@ -197,7 +197,7 @@ class DirectoryDiscrepancyChecker:
         """Compare the office address of the MCB directory and UIS.  Note, UIS has a different  
         format, concatenated into one string that is delimted by '$'
 
-        UIS address example: RAMAN M PRASAD$Harvard, FAS Molecular & Cell Biology$Northwest Lab Building Rm 190.01$52 Oxford Street$Cambridge MA 02138    
+        UIS address example: FNAME M LNAME$Harvard, FAS Molecular & Cell Biology$Northwest Lab Building Rm 190.01$52 Oxford Street$Cambridge MA 02138    
         
         UIS also has separate zipcode and and state fields
          

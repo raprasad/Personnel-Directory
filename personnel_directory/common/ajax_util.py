@@ -2,15 +2,12 @@ from django.http import HttpResponse
 from django.template.defaultfilters import slugify, escapejs
 from django.template.loader import render_to_string
 
-MCB_SERVERS = { '140.247.111.143' : 'mcb.intranet.harvard.edu' \
-        , '140.247.111.165' : 'webapps.sciences.fas.harvard.edu' \
-        , '140.247.108.24' : 'raman desktop' \
-        #, '140.247.111.70' : 'www.mcb.harvard.edu' \
+MCB_SERVERS = { 
+        #, '140.247.111.70' : 'www.mcb.university.edu' \
         #, '127.0.0.1' : 'local machine (for testing)' \
 }        
 
 SERVERS_ALLOWED_TO_MAKE_JSON_CALL = MCB_SERVERS.keys()
-#[ '140.247.111.70', '140.247.111.165', '140.247.108.24', '127.0.0.1']
 
 def get_http_err(msg):
     return HttpResponse('Error: %s' % msg)
