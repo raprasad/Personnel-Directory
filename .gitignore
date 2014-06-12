@@ -2,3 +2,6 @@
 *.DS_Store
 *.swp
 scripts/*.txtphp-auth-code/old-test/xhu_pin_login.php
+php-auth-code/*
+personnel_directory/person/fixtures/*
+personnel_directory/hu_ldap/addr_file.txt
